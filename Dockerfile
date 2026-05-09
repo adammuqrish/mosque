@@ -19,17 +19,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY composer.json composer.lock ./
 
-# Create .env from example before composer install
+# Create .env from example
 COPY .env.example .env
 
-# Generate app key before composer runs post-autoload-dump
-RUN php artisan key:generate --force
-
+# Install dependencies without scripts (avoid key:generate during build)
 RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts
 
-# Run post-install scripts manually after vendor exists
+# Run artisan commands after vendor exists
 RUN php artisan package:discover --ansi
-RUN php artisan config:cache
 
 FROM php:8.1-cli
 
