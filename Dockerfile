@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo_mysql zip gd
 
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 COPY composer.json composer.lock ./
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
