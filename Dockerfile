@@ -18,11 +18,17 @@ RUN docker-php-ext-install pdo_mysql zip gd
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY composer.json composer.lock ./
-RUN composer install --optimize-autoloader --no-dev --no-interaction
 
-COPY . .
+# Create .env from example before composer install
+COPY .env.example .env
 
+# Generate app key before composer runs post-autoload-dump
 RUN php artisan key:generate --force
+
+RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts
+
+# Run post-install scripts manually after vendor exists
+RUN php artisan package:discover --ansi
 RUN php artisan config:cache
 
 FROM php:8.1-cli
