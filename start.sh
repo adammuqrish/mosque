@@ -35,5 +35,8 @@ echo "--- Seeders complete ---"
 echo "--- Caching config ---"
 php artisan config:cache --no-interaction 2>&1 || true
 
+echo "--- Creating storage link ---"
+php artisan storage:link --no-interaction 2>&1 || true
+
 echo "=== Starting PHP Artisan Serve ==="
 php artisan serve --host=0.0.0.0 --port=$PORT
