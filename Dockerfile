@@ -47,9 +47,11 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo_mysql zip gd
 
 COPY --from=builder /var/www/html /var/www/html
+COPY start.sh /var/www/html/start.sh
 
 RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod +x /var/www/html/start.sh
 
-EXPOSE $PORT
+EXPOSE 8080
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=$PORT"]
+CMD ["/var/www/html/start.sh"]
