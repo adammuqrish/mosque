@@ -9,6 +9,9 @@ php artisan key:generate --force --no-interaction -q 2>/dev/null || echo "APP_KE
 # Run migrations (safe to re-run, will skip already-run migrations)
 php artisan migrate --force --no-interaction || echo "Migration issue — check logs above."
 
+# Seed default users (admin@mosque.com / password) only if users table is empty
+php artisan db:seed --force --no-interaction 2>/dev/null || true
+
 # Cache config for production
 php artisan config:cache --no-interaction 2>/dev/null || true
 
