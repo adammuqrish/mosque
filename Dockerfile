@@ -25,6 +25,9 @@ COPY .env.example .env
 # Install dependencies without scripts (avoid key:generate during build)
 RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts
 
+# Copy full project (includes artisan file)
+COPY . .
+
 # Run artisan commands after vendor exists
 RUN php artisan package:discover --ansi
 
