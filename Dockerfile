@@ -54,4 +54,4 @@ RUN chmod +x /var/www/html/start.sh
 
 EXPOSE 8080
 
-CMD ["/var/www/html/start.sh"]
+CMD ["bash", "/var/www/html/start.sh"]
