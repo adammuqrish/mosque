@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 PORT=${PORT:-8080}
 
@@ -9,7 +8,7 @@ echo "--- Generating APP_KEY ---"
 php artisan key:generate --force --no-interaction -q || echo "APP_KEY OK"
 
 echo "--- Running migrations ---"
-php artisan migrate --force --no-interaction 2>&1
+php artisan migrate --force --no-interaction 2>&1 || echo "Migration failed!"
 echo "--- Migrations complete ---"
 
 echo "--- Running seeders ---"

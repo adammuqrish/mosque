@@ -14,7 +14,8 @@ class AddRoleAndPhoneToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->enum('role', ['admin', 'treasurer', 'member'])->default('member')->after('password');
+            $table->string('phone')->nullable()->after('role');
         });
     }
 
@@ -26,7 +27,7 @@ class AddRoleAndPhoneToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn(['role', 'phone']);
         });
     }
 }

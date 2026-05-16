@@ -21,10 +21,6 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            // Add Role Column (Default: member)
-            $table->enum('role', ['admin', 'treasurer', 'member'])->default('member')->after('password');
-            // Add Phone Column (Optional, nullable)
-            $table->string('phone')->nullable()->after('role');
         });
     }
 
