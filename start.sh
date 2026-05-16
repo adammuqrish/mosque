@@ -20,7 +20,7 @@ if [ -f railway_import.sql ]; then
     DB_PORT="${DB_URL%%/*}"
     DB_NAME="${DB_URL#*/}"
 
-    mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" < railway_import.sql 2>&1 && echo "Import successful" || echo "Import had errors (some may be expected)"
+    mysql --ssl-mode=DISABLED -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" < railway_import.sql 2>&1 && echo "Import successful" || echo "Import had errors (some may be expected)"
 fi
 echo "--- Import complete ---"
 
