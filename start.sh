@@ -3,16 +3,21 @@ set -e
 
 PORT=${PORT:-8080}
 
-# Generate APP_KEY if not set
-php artisan key:generate --force --no-interaction -q 2>/dev/null || echo "APP_KEY OK"
+echo "=== Starting deployment setup ==="
 
-# Run migrations (safe to re-run, will skip already-run migrations)
-php artisan migrate --force --no-interaction || echo "Migration issue — check logs above."
+echo "--- Generating APP_KEY ---"
+php artisan key:generate --force --no-interaction -q || echo "APP_KEY OK"
 
-# Seed default users (admin@mosque.com / password)
-php artisan db:seed --force --no-interaction || echo "Seed may have already run."
+echo "--- Running migrations ---"
+php artisan migrate --force --no-interaction 2>&1
+echo "--- Migrations complete ---"
 
-# Cache config for production
-php artisan config:cache --no-interaction 2>/dev/null || true
+echo "--- Running seeders ---"
+php artisan db:seed --force --no-interaction 2>&1 || true
+echo "--- Seeders complete ---"
 
+echo "--- Caching config ---"
+php artisan config:cache --no-interaction 2>&1 || true
+
+echo "=== Starting PHP Artisan Serve ==="
 php artisan serve --host=0.0.0.0 --port=$PORT
