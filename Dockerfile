@@ -42,23 +42,24 @@ RUN npm run production --no-interaction 2>/dev/null || echo "Asset compilation s
 # Run artisan commands after vendor exists
 RUN php artisan package:discover --ansi
 
-FROM php:8.1-cli
+FROM php:8.1-fpm
 
 WORKDIR /var/www/html
 
 RUN apt-get update && apt-get install -y \
-    git \
     unzip \
     libzip-dev \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
     curl \
-    default-mysql-client
+    default-mysql-client \
+    nginx
 
 RUN docker-php-ext-install pdo_mysql zip gd
 
 COPY --from=builder /var/www/html /var/www/html
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /var/www/html/start.sh
 
 RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache

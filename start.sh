@@ -38,5 +38,8 @@ php artisan config:cache --no-interaction 2>&1 || true
 echo "--- Creating storage link ---"
 php artisan storage:link --no-interaction 2>&1 || true
 
-echo "=== Starting PHP Artisan Serve ==="
-php artisan serve --host=0.0.0.0 --port=$PORT
+echo "=== Starting PHP-FPM ==="
+php-fpm -D 2>&1 || echo "PHP-FPM already running"
+
+echo "=== Starting Nginx ==="
+nginx -g "daemon off;" 2>&1
