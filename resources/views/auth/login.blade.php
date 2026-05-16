@@ -4,40 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Mosque System</title>
+    <title>Login - Smart Mosque System</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slideIn { animation: slideIn 0.3s ease-out forwards; }
+        .font-islamic { font-family: 'Amiri', serif; }
+    </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center h-screen p-4">
+<body class="bg-[#FAFAF5] flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-6xl flex flex-col md:flex-row gap-8">
+    <!-- STEP 2: Login Container with responsive layout -->
+    <div class="w-full max-w-6xl flex flex-col md:flex-row gap-6 lg:gap-8">
 
         <!-- LEFT COLUMN: LOGIN FORM -->
         <div class="w-full md:w-2/3 bg-white rounded-lg shadow-xl overflow-hidden">
-            <div class="bg-emerald-600 p-6 text-center">
-                <h1 class="text-2xl font-bold text-white">Mosque System Login</h1>
-                <p class="text-emerald-100 text-sm">Silakan log masuk untuk akses sistem.</p>
+            <div class="bg-emerald-800 p-6 text-center pattern-islamic">
+                <h1 class="text-2xl font-bold text-white">
+                    <span class="font-islamic text-emerald-200 text-lg mr-2">بِسْمِ ٱللَّهِ</span>Smart Mosque System
+                </h1>
+                <p class="text-emerald-200 text-sm">Assalamu Alaikum — Silakan log masuk untuk akses sistem.</p>
             </div>
 
             <div class="p-8">
                 <!-- Login Form -->
-                <form method="POST" action="/login">
+                <form method="POST" action="/login" data-loading>
                     @csrf
 
-                    <!-- TAMBAHKAN BLOCK NI -->
+                    <!-- STEP 1: Flash message with icon styling -->
                     @if (session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-                            role="alert">
-                            <span class="block sm:inline">{{ session('success') }}</span>
+                        <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg flex items-start gap-3 animate-slideIn">
+                            <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="text-green-800">{{ session('success') }}</p>
                         </div>
                     @endif
-                    <!-- ----------------- -->
 
-                    <!-- Error Message (Sudah sedia ada) -->
+                    <!-- STEP 2: Error message with icon styling -->
                     @if ($errors->any())
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-                            role="alert">
-                            <span class="block sm:inline">{{ $errors->first('email') }}</span>
+                        <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg flex items-start gap-3 animate-slideIn">
+                            <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <p class="text-red-800 font-semibold">Login Failed</p>
+                                <p class="text-red-700 text-sm">{{ $errors->first() }}</p>
+                            </div>
                         </div>
                     @endif
 
@@ -45,23 +65,39 @@
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
                         <input id="email" type="email" name="email"
-                            class="shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            placeholder="admin@mosque.com" required>
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition @error('email') border-red-500 ring-2 ring-red-200 @enderror"
+                            placeholder="admin@mosque.com" value="{{ old('email') }}" required>
+                        @error('email')
+                            <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <!-- Password Input -->
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
                         <input id="password" type="password" name="password"
-                            class="shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition @error('password') border-red-500 ring-2 ring-red-200 @enderror"
                             placeholder="********" required>
+                        @error('password')
+                            <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    <!-- Button -->
+                    <!-- STEP 1: Submit Button -->
                     <button
-                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 min-h-[48px]"
                         type="submit">
-                        Sign In
+                        <span>Sign In</span>
                     </button>
                 </form>
 
@@ -153,9 +189,6 @@
         function fillLogin(email, password) {
             document.getElementById('email').value = email;
             document.getElementById('password').value = password;
-
-            // Optional: Auto focus on password or submit
-            // document.getElementById('password').focus();
         }
     </script>
 

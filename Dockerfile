@@ -17,6 +17,14 @@ RUN docker-php-ext-install pdo_mysql zip gd
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Install Node.js & npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+
+COPY package.json package-lock.json ./
+
+# Install npm dependencies
+RUN npm ci --no-audit --no-fund
+
 COPY composer.json composer.lock ./
 
 # Create .env from example
@@ -27,6 +35,9 @@ RUN composer install --optimize-autoloader --no-dev --no-interaction --no-script
 
 # Copy full project (includes artisan file)
 COPY . .
+
+# Compile frontend assets
+RUN npm run production --no-interaction 2>/dev/null || echo "Asset compilation skipped"
 
 # Run artisan commands after vendor exists
 RUN php artisan package:discover --ansi

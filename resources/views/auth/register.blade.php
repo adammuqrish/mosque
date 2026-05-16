@@ -4,96 +4,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Mosque System</title>
+    <title>Register - Smart Mosque System</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slideIn { animation: slideIn 0.3s ease-out forwards; }
+        .font-islamic { font-family: 'Amiri', serif; }
+    </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center h-screen p-4">
+<body class="bg-[#FAFAF5] flex items-center justify-center min-h-screen p-4">
 
     <div class="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden">
 
         <!-- Header -->
-        <div class="bg-emerald-600 p-6 text-center">
-            <h1 class="text-2xl font-bold text-white">Join Community</h1>
-            <p class="text-emerald-100 text-sm">Create an account to start volunteering.</p>
+        <div class="bg-emerald-800 p-6 text-center pattern-islamic">
+            <h1 class="text-2xl font-bold text-white">
+                <span class="font-islamic text-emerald-200 text-lg mr-2">بِسْمِ ٱللَّهِ</span>Join Community
+            </h1>
+            <p class="text-emerald-200 text-sm">Create an account to start volunteering and earn rewards.</p>
         </div>
 
         <!-- Form -->
-        <div class="p-6"> <!-- Kurangkan padding dari p-8 ke p-6 -->
-            <form method="POST" action="/register">
+        <div class="p-6">
+            <form method="POST" action="/register" data-loading>
                 @csrf
 
-                <!-- TAMBAHKAN BLOCK NI UNTUK PAPAR ERROR -->
+                <!-- STEP 1: Inline validation errors with icon styling -->
                 @if ($errors->any())
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mb-4 text-xs">
-                        <p class="font-bold">Oops! Something went wrong:</p>
-                        <ul class="list-disc pl-4 mt-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                    <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-slideIn">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <p class="font-semibold text-red-800">Please fix the following errors:</p>
+                                <ul class="list-disc list-inside text-sm text-red-700 mt-1 space-y-0.5">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 @endif
-                <!-- TAMAT ERROR BLOCK -->
 
                 <!-- Name -->
-                <div class="mb-3"> <!-- Kurangkan margin dari mb-4 ke mb-3 -->
-                    <label class="block text-gray-700 text-xs font-bold mb-1">Full Name</label>
-                    <!-- Label lebih kecil -->
-                    <input type="text" name="name" class="w-full border rounded px-2 py-1.5 text-sm" required>
-                    <!-- Input lebih padat -->
-                </div>
-
-                <!-- Email -->
-                <div class="mb-3">
-                    <label class="block text-gray-700 text-xs font-bold mb-1">Email Address</label>
-                    <input type="email" name="email" class="w-full border rounded px-2 py-1.5 text-sm" required>
-                </div>
-
-                <!-- Phone -->
-                <div class="mb-3">
-                    <label class="block text-gray-700 text-xs font-bold mb-1">Phone Number</label>
-                    <input type="tel" name="phone" pattern="[0-9\+\-\s]*"
-                        class="w-full border rounded px-2 py-1.5 text-sm" required>
-                </div>
-
-                <!-- PASSWORDS BERSEBELAHAN (Jimat Tinggi) -->
-                <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-gray-700 text-xs font-bold mb-1">Password</label>
-                        <input type="password" name="password" class="w-full border rounded px-2 py-1.5 text-sm"
-                            required>
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 text-xs font-bold mb-1">Confirm Password</label>
-                        <input type="password" name="password_confirmation"
-                            class="w-full border rounded px-2 py-1.5 text-sm" required>
-                    </div>
-                </div>
-
-                <!-- Divider Ringkas -->
-                <div class="flex items-center my-3"> <!-- Kurangkan margin -->
-                    <div class="flex-grow border-t border-gray-200"></div>
-                    <span class="flex-shrink-0 mx-2 text-gray-400 text-xs">Staff Only</span>
-                    <div class="flex-grow border-t border-gray-200"></div>
-                </div>
-
-                <!-- Special Code -->
                 <div class="mb-4">
-                    <label class="block text-gray-600 text-xs font-medium mb-1">Special Code (Optional)</label>
-                    <input type="text" name="special_code" value="{{ old('special_code') }}"
-                        class="w-full border border-dashed border-gray-300 rounded px-2 py-1 text-xs italic {{ $errors->has('special_code') ? 'border-red-500' : '' }}"
-                        placeholder="Enter code if you are Staff/Committee">
-
-                    @error('special_code')
-                        <p class="text-red-500 text-xs mt-0.5">{{ $message }}</p>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                    <input type="text" name="name" value="{{ old('name') }}"
+                        class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none transition @error('name') border-red-500 ring-2 ring-red-200 @enderror"
+                        placeholder="Enter your full name" required>
+                    @error('name')
+                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                            </svg>
+                            {{ $message }}
+                        </p>
                     @enderror
                 </div>
 
+                <!-- Email -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <input type="email" name="email" value="{{ old('email') }}"
+                        class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none transition @error('email') border-red-500 ring-2 ring-red-200 @enderror"
+                        placeholder="you@example.com" required>
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+                    <input type="tel" name="phone" value="{{ old('phone') }}"
+                        class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none transition @error('phone') border-red-500 ring-2 ring-red-200 @enderror"
+                        placeholder="0123456789" required>
+                    @error('phone')
+                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- STEP 4: Password Fields -->
+                <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" name="password"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition @error('password') border-red-500 ring-2 ring-red-200 @enderror"
+                            placeholder="Min 8 chars" required>
+                        @error('password')
+                            <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+                        <input type="password" name="password_confirmation"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                            placeholder="Re-enter password" required>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink-0 mx-3 text-gray-400 text-xs bg-white px-2">Optional Codes</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <!-- STEP 1: Referral Code Input (Member-to-Member Referrals) -->
+                <div class="mb-4">
+                    <label class="block text-gray-600 text-sm font-medium mb-2">Referral Code <span class="text-gray-400 font-normal">(Optional)</span></label>
+                    <input type="text" name="referral_code" value="{{ old('referral_code') }}"
+                        class="w-full border border-dashed rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition @error('referral_code') border-red-500 ring-2 ring-red-200 @enderror"
+                        placeholder="Enter code from a friend (e.g., A3F9B2C1)">
+                    @error('referral_code')
+                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                    <p class="text-xs text-gray-400 mt-1">Got a referral code from a friend? Enter it here! Invalid codes will block registration.</p>
+                </div>
+
+                <!-- STEP 2: Special Code Input (Staff/Committee Registration) -->
+                <div class="mb-6">
+                    <label class="block text-gray-600 text-sm font-medium mb-2">Staff Special Code <span class="text-gray-400 font-normal">(Optional)</span></label>
+                    <input type="text" name="special_code" value="{{ old('special_code') }}"
+                        class="w-full border border-dashed rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none transition @error('special_code') border-red-500 ring-2 ring-red-200 @enderror"
+                        placeholder="Enter code if you are Staff">
+                    @error('special_code')
+                        <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                    <p class="text-xs text-gray-400 mt-1">Contact committee for staff registration codes.</p>
+                </div>
+
                 <!-- Button -->
-                <button
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded transition text-sm">
-                    Register Now
+                <button type="button" onclick="autoFillRegister()"
+                    class="w-full bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2 mb-3">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Auto Fill
+                </button>
+                <button type="submit"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                    <span>Register Now</span>
                 </button>
 
             </form>
@@ -104,76 +187,27 @@
             </div>
         </div>
 
-        <!-- DEVELOPER TOOLS (JANGAN TAMBAH KAT BAWAH FORM, PASTE SEBELUM </BODY> ONLY) -->
-        <div class="fixed bottom-5 right-5 bg-white shadow-2xl border border-gray-300 rounded-lg p-4 z-50 w-64">
-            <div class="flex justify-between items-center border-b pb-2 mb-2">
-                <span class="font-bold text-gray-700 text-sm">Dev Tools</span>
-                <span class="text-[10px] text-gray-400 bg-gray-100 px-1 rounded">Demo</span>
-            </div>
-
-            <div class="space-y-2">
-                <!-- Option 1: Admin -->
-                <button onclick="fillAdmin()"
-                    class="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2 px-3 rounded transition">
-                    Auto-Admin
-                </button>
-
-                <!-- Option 2: Treasurer -->
-                <button onclick="fillTreasurer()"
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-2 px-3 rounded transition">
-                    Auto-Treasurer
-                </button>
-
-                <!-- Option 3: Member (Reset) -->
-                <button onclick="resetToMember()"
-                    class="w-full bg-gray-500 hover:bg-gray-600 text-white text-xs font-bold py-2 px-3 rounded transition">
-                    Clear (Member Mode)
-                </button>
-            </div>
-
-            <p class="text-[10px] text-gray-400 mt-2 text-center">Phone & Email Randomized</p>
-        </div>
-
-        <script>
-            // Helper: Random Phone
-            function getRandomPhone() {
-                return '01' + Math.floor(Math.random() * 80000000 + 10000000);
-            }
-
-            // Helper: Random Email
-            function getRandomEmail(role) {
-                const randomNum = Math.floor(Math.random() * 10000);
-                return `${role}${randomNum}@mosque.com`;
-            }
-
-            // Option 1: Fill Admin
-            function fillAdmin() {
-                document.querySelector('input[name="name"]').value = 'Admin User';
-                document.querySelector('input[name="email"]').value = getRandomEmail('admin');
-                document.querySelector('input[name="phone"]').value = getRandomPhone();
-                document.querySelector('input[name="password"]').value = 'password';
-                document.querySelector('input[name="password_confirmation"]').value = 'password';
-            }
-
-            // Option 2: Fill Treasurer
-            function fillTreasurer() {
-                document.querySelector('input[name="name"]').value = 'Treasurer User';
-                document.querySelector('input[name="email"]').value = getRandomEmail('treasurer');
-                document.querySelector('input[name="phone"]').value = getRandomPhone();
-                document.querySelector('input[name="password"]').value = 'password';
-                document.querySelector('input[name="password_confirmation"]').value = 'password';
-            }
-
-            // Option 3: Clear (Member Mode)
-            function resetToMember() {
-                document.querySelector('input[name="name"]').value = '';
-                document.querySelector('input[name="email"]').value = '';
-                document.querySelector('input[name="phone"]').value = '';
-                document.querySelector('input[name="password"]').value = '';
-                document.querySelector('input[name="password_confirmation"]').value = '';
-            }
-        </script>
-
 </body>
+
+<script>
+function autoFillRegister() {
+    const firstNames = ['Ahmad', 'Muhammad', 'Ali', 'Omar', 'Hassan', 'Ibrahim', 'Yusuf', 'Adam', 'Zayn', 'Farid', 'Aisha', 'Fatimah', 'Maryam', 'Khadijah', 'Nur', 'Siti', 'Amira', 'Zainab'];
+    const lastNames = ['Abdullah', 'Rahman', 'Ismail', 'Hussein', 'Kamal', 'Razak', 'Harun', 'Sulaiman', 'Yahya', 'Malik', 'Aziz', 'Hassan', 'Ibrahim'];
+    const phones = ['012', '013', '014', '016', '017', '018', '019'];
+
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const fullName = firstName + ' ' + lastName;
+    const emailBase = firstName.toLowerCase() + '.' + Math.floor(Math.random() * 999);
+    const phonePrefix = phones[Math.floor(Math.random() * phones.length)];
+    const phoneSuffix = Math.floor(Math.random() * 9000000 + 1000000);
+
+    document.querySelector('input[name="name"]').value = fullName;
+    document.querySelector('input[name="email"]').value = emailBase + '@example.com';
+    document.querySelector('input[name="phone"]').value = phonePrefix + phoneSuffix;
+    document.querySelector('input[name="password"]').value = 'Password123!';
+    document.querySelector('input[name="password_confirmation"]').value = 'Password123!';
+}
+</script>
 
 </html>

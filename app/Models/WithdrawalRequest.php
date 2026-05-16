@@ -9,7 +9,7 @@ class WithdrawalRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['requested_by', 'amount', 'purpose', 'status', 'approved_by', 'approved_at'];
+    protected $fillable = ['requested_by', 'type', 'amount', 'purpose', 'status', 'approved_by', 'approved_at', 'rejection_reason'];
 
     protected $casts = [
         'approved_at' => 'datetime', //supaya boleh guna format('d M Y') kat blade
