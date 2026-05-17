@@ -258,9 +258,9 @@
                                 </a>
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                <a href="{{ request()->fullUrlWithQuery(['sort_event' => 'created_at', 'direction_event' => $sortEvent === 'created_at' && $directionEvent === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-gray-700">
+                                <a href="{{ request()->fullUrlWithQuery(['sort_event' => 'volunteers_count', 'direction_event' => $sortEvent === 'volunteers_count' && $directionEvent === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-gray-700">
                                     Volunteers
-                                    @if($sortEvent === 'created_at')
+                                    @if($sortEvent === 'volunteers_count')
                                         <svg class="w-4 h-4 {{ $directionEvent === 'desc' ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                                     @endif
                                 </a>
@@ -271,7 +271,7 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($events as $evt)
                         @php
-                            $volunteerCount = $evt->volunteers()->count();
+                            $volunteerCount = $evt->volunteers_count;
                             $percentage = min(100, ($volunteerCount / max(1, $evt->max_volunteers)) * 100);
                             $isFull = $volunteerCount >= $evt->max_volunteers;
                             $isPast = $evt->isPast();
@@ -279,7 +279,7 @@
                         <tr class="hover:bg-gray-50 transition {{ isset($event) && $event->id == $evt->id ? 'bg-yellow-50' : '' }}">
                             <!-- Status Badge -->
                             <td class="px-4 py-3">
-                                @if($evt->status === 'open')
+                                @if($evt->effective_status === 'open')
                                     @if($isFull)
                                         <span class="inline-flex items-center gap-1 bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-medium">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -291,7 +291,7 @@
                                             Open
                                         </span>
                                     @endif
-                                @elseif($evt->status === 'closed')
+                                @elseif($evt->effective_status === 'closed')
                                     <span class="inline-flex items-center gap-1 bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-full font-medium">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                         Closed
@@ -302,11 +302,11 @@
                                         Cancelled
                                     </span>
                                 @endif
-                                @if($isPast && $evt->status !== 'cancelled')
+                                @if($isPast && $evt->effective_status !== 'cancelled')
                                     <span class="inline-flex items-center gap-1 bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded ml-1">Past</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-sm">{{ $evt->event_date->format('d M Y') }}</td>
+                            <td class="px-4 py-3 text-sm">{{ $evt->event_date ? $evt->event_date->format('d M Y') : 'No date' }}</td>
                             <td class="px-4 py-3">
                                 <span class="text-sm font-bold text-gray-900">{{ $evt->title }}</span>
                                 @if(is_array($evt->required_skills) && count($evt->required_skills) > 0)
@@ -339,17 +339,17 @@
                                                 <form action="{{ route('events.changeStatus', $evt->id) }}" method="POST" class="p-1">
                                                     @csrf @method('PATCH')
                                                     <input type="hidden" name="status" value="open">
-                                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs hover:bg-green-50 text-green-700 rounded {{ $evt->status === 'open' ? 'bg-green-100' : '' }}">Open</button>
+                                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs hover:bg-green-50 text-green-700 rounded {{ $evt->effective_status === 'open' ? 'bg-green-100' : '' }}">Open</button>
                                                 </form>
                                                 <form action="{{ route('events.changeStatus', $evt->id) }}" method="POST" class="p-1">
                                                     @csrf @method('PATCH')
                                                     <input type="hidden" name="status" value="closed">
-                                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 text-gray-700 rounded {{ $evt->status === 'closed' ? 'bg-gray-100' : '' }}">Close</button>
+                                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 text-gray-700 rounded {{ $evt->effective_status === 'closed' ? 'bg-gray-100' : '' }}">Close</button>
                                                 </form>
                                                 <form action="{{ route('events.changeStatus', $evt->id) }}" method="POST" class="p-1">
                                                     @csrf @method('PATCH')
                                                     <input type="hidden" name="status" value="cancelled">
-                                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-700 rounded {{ $evt->status === 'cancelled' ? 'bg-red-100' : '' }}">Cancel</button>
+                                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-700 rounded {{ $evt->effective_status === 'cancelled' ? 'bg-red-100' : '' }}">Cancel</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -385,7 +385,7 @@
         <div class="lg:hidden divide-y divide-gray-200">
             @forelse($events as $evt)
                 @php
-                    $volunteerCount = $evt->volunteers()->count();
+                    $volunteerCount = $evt->volunteers_count;
                     $percentage = min(100, ($volunteerCount / max(1, $evt->max_volunteers)) * 100);
                     $isFull = $volunteerCount >= $evt->max_volunteers;
                     $isPast = $evt->isPast();
@@ -396,18 +396,18 @@
                         <div class="flex-1 min-w-0">
                             <!-- Status Badges -->
                             <div class="flex flex-wrap items-center gap-1 mb-2">
-                                @if($evt->status === 'open')
+                                @if($evt->effective_status === 'open')
                                     @if($isFull)
                                         <span class="inline-flex items-center gap-1 bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full font-medium">Full</span>
                                     @else
                                         <span class="inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-medium">Open</span>
                                     @endif
-                                @elseif($evt->status === 'closed')
+                                @elseif($evt->effective_status === 'closed')
                                     <span class="inline-flex items-center gap-1 bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-full font-medium">Closed</span>
                                 @else
                                     <span class="inline-flex items-center gap-1 bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full font-medium">Cancelled</span>
                                 @endif
-                                @if($isPast && $evt->status !== 'cancelled')
+                                @if($isPast && $evt->effective_status !== 'cancelled')
                                     <span class="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full">Past</span>
                                 @endif
                             </div>
@@ -419,7 +419,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-600 mb-3">
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <span>{{ $evt->event_date->format('d M Y, h:i A') }}</span>
+                            <span>{{ $evt->event_date ? $evt->event_date->format('d M Y, h:i A') : 'No date' }}</span>
                         </div>
                         <div class="flex items-center gap-1.5 sm:ml-3">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>

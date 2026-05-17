@@ -14,7 +14,7 @@ class EventController extends Controller
         $sortEvent = $request->get('sort_event', 'event_date');
         $directionEvent = $request->get('direction_event', 'desc');
         
-        $allowedSorts = ['event_date', 'title', 'status', 'created_at'];
+        $allowedSorts = ['event_date', 'title', 'status', 'volunteers_count'];
         if (!in_array($sortEvent, $allowedSorts)) {
             $sortEvent = 'event_date';
         }
@@ -22,7 +22,9 @@ class EventController extends Controller
             $directionEvent = 'asc';
         }
 
-        $events = Event::orderBy($sortEvent, $directionEvent)->paginate(10);
+        $events = Event::withCount(['volunteers' => function ($query) {
+            $query->whereIn('event_volunteer.attendance_status', ['confirmed', 'pending_review', 'completed']);
+        }])->orderBy($sortEvent, $directionEvent)->paginate(10);
         return view('events.index', compact('events', 'sortEvent', 'directionEvent'));
     }
 
@@ -73,7 +75,7 @@ class EventController extends Controller
 
         $sortEvent = request()->get('sort_event', 'event_date');
         $directionEvent = request()->get('direction_event', 'desc');
-        $allowedSorts = ['event_date', 'title', 'status', 'created_at'];
+        $allowedSorts = ['event_date', 'title', 'status', 'volunteers_count'];
         if (!in_array($sortEvent, $allowedSorts)) {
             $sortEvent = 'event_date';
         }
@@ -81,7 +83,9 @@ class EventController extends Controller
             $directionEvent = 'asc';
         }
 
-        $events = Event::orderBy($sortEvent, $directionEvent)->paginate(10);
+        $events = Event::withCount(['volunteers' => function ($query) {
+            $query->whereIn('event_volunteer.attendance_status', ['confirmed', 'pending_review', 'completed']);
+        }])->orderBy($sortEvent, $directionEvent)->paginate(10);
         
         return view('events.index', compact('event', 'events', 'sortEvent', 'directionEvent'));
     }
