@@ -658,6 +658,42 @@
                             <span>{{ $donation->user->name }}</span>
                         </div>
                     </div>
+                    <div class="mt-3 flex items-center justify-end gap-2">
+                        @if($donation->can_verify)
+                            <button type="button" onclick="showConfirmModal('Confirm Donation', 'Confirm this donation? This will mark it as verified.', 'Confirm', 'bg-green-500 hover:bg-green-600', '{{ route('donations.confirm', $donation->id) }}', 'PATCH')" class="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg transition font-medium">
+                                Confirm
+                            </button>
+                            <button type="button" onclick="showConfirmModal('Dispute Donation', 'Mark this donation as disputed? This should only be done if there is a mismatch.', 'Dispute', 'bg-red-500 hover:bg-red-600', '{{ route('donations.dispute', $donation->id) }}', 'PATCH')" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg transition font-medium">
+                                Dispute
+                            </button>
+                        @elseif($donation->status === 'confirmed')
+                            <div class="flex items-center gap-1.5">
+                                <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-medium">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Verified
+                                </span>
+                                @if($donation->zakatAkad)
+                                    <a href="{{ route('donations.akad.print', $donation->id) }}" target="_blank" class="text-[#C5A059] hover:text-amber-700 transition p-1" title="Print Akad Slip">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    </a>
+                                @endif
+                            </div>
+                        @elseif($donation->status === 'disputed')
+                            <div class="flex items-center gap-1.5">
+                                <span class="inline-flex items-center gap-1 bg-red-100 text-red-700 text-xs px-2.5 py-1 rounded-full font-medium">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    Flagged
+                                </span>
+                                @if($donation->zakatAkad)
+                                    <a href="{{ route('donations.akad.print', $donation->id) }}" target="_blank" class="text-[#C5A059] hover:text-amber-700 transition p-1" title="Print Akad Slip">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    </a>
+                                @endif
+                            </div>
+                        @else
+                            <span class="text-gray-400 text-xs">—</span>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div class="p-8 text-center">
