@@ -79,7 +79,7 @@ class DonationController extends Controller
             'amount' => $validated['amount'],
             'category' => $validated['category'],
             'type' => $this->getDonationType($validated['category']),
-            'fund_purpose' => $validated['fund_purpose'] ?? null,
+            'fund_purpose' => in_array($validated['category'], ['zakat', 'zakat_fitr', 'waqf']) ? 'General Fund' : ($validated['fund_purpose'] ?? null),
             'source' => $validated['source'],
             'status' => $validated['status'] ?? 'pending',
             'reference' => $validated['reference'] ?? null,

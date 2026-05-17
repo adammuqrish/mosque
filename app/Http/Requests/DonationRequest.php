@@ -34,6 +34,9 @@ class DonationRequest extends FormRequest
                     if ($category === 'sadaqah' && empty($value)) {
                         $fail('Fund purpose is required for Sadaqah donations (e.g. General Fund, Kipas Gergasi).');
                     }
+                    if (in_array($category, ['zakat', 'zakat_fitr', 'waqf']) && !empty($value) && $value !== 'General Fund') {
+                        $fail('Fund purpose for ' . $category . ' donations must be "General Fund". The selected purpose will be ignored and set to General Fund.');
+                    }
                 },
             ],
 

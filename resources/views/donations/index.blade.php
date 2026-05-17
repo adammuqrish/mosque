@@ -98,11 +98,11 @@
             </div>
 
             {{-- Fund Purpose --}}
-            <div class="mt-4">
+            <div id="fundPurposeGroup" class="mt-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">
                     Fund Purpose
                     <span id="fundPurposeRequired" class="text-red-500 hidden">*</span>
-                    <span class="text-gray-400 font-normal">(e.g. General Fund, Kipas Gergasi)</span>
+                    <span id="fundPurposeHint" class="text-gray-400 font-normal">(e.g. General Fund, Kipas Gergasi)</span>
                 </label>
                 <input type="text" name="fund_purpose" id="fundPurposeInput"
                     class="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition @error('fund_purpose') border-red-500 ring-2 ring-red-200 @enderror"
@@ -117,6 +117,20 @@
                             {{ $purpose }}
                         </button>
                     @endforeach
+                </div>
+            </div>
+
+            {{-- Static Fund Purpose display for Zakat & Waqf --}}
+            <div id="fundPurposeStatic" class="mt-4 hidden">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Fund Purpose</label>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-sm font-medium px-3 py-2 rounded-lg border border-emerald-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        General Fund
+                    </span>
+                    <span class="text-xs text-gray-400">(Auto-set — Zakat/Waqf donations are pooled into the general fund)</span>
                 </div>
             </div>
 
@@ -670,7 +684,10 @@ function onCategoryChange() {
     const select = document.getElementById('categorySelect');
     const donorSection = document.getElementById('donorInfoSection');
     const akadSection = document.getElementById('akadSection');
+    const fundPurposeGroup = document.getElementById('fundPurposeGroup');
+    const fundPurposeStatic = document.getElementById('fundPurposeStatic');
     const fundPurposeRequired = document.getElementById('fundPurposeRequired');
+    const fundPurposeHint = document.getElementById('fundPurposeHint');
 
     const requiresDonor = ['zakat', 'zakat_fitr', 'waqf'];
     if (requiresDonor.includes(select.value)) {
@@ -686,9 +703,17 @@ function onCategoryChange() {
     }
 
     if (select.value === 'sadaqah') {
+        fundPurposeGroup.classList.remove('hidden');
+        fundPurposeStatic.classList.add('hidden');
         fundPurposeRequired.classList.remove('hidden');
+        fundPurposeHint.textContent = '(e.g. General Fund, Kipas Gergasi)';
+        document.getElementById('fundPurposeInput').disabled = false;
     } else {
+        fundPurposeGroup.classList.add('hidden');
+        fundPurposeStatic.classList.remove('hidden');
         fundPurposeRequired.classList.add('hidden');
+        fundPurposeHint.textContent = '(Auto-set to General Fund)';
+        document.getElementById('fundPurposeInput').disabled = true;
     }
 }
 
