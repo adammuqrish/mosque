@@ -190,9 +190,8 @@ class AuthController extends Controller
 
         if ($user && !$user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
-            return back()->with('success', 'Pautan pengesahan telah dihantar semula ke e-mel anda.');
         }
 
-        return back()->withErrors(['email' => 'Tiada akaun belum disahkan ditemui dengan alamat e-mel tersebut.']);
+        return back()->with('success', 'Jika alamat e-mel tersebut didaftarkan dan belum disahkan, pautan pengesahan telah dihantar.');
     }
 }
