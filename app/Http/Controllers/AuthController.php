@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use App\Services\GamificationService;
+use App\Services\RegistrationCodeService;
 
 class AuthController extends Controller
 {
@@ -58,7 +59,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request, RegistrationCodeService $codeService)
     {
         $validated = $request->validated();
         $specialCode = $validated['special_code'] ?? '';
@@ -66,10 +67,8 @@ class AuthController extends Controller
         $role = 'member';
 
         if (!empty($specialCode)) {
-            $validCodes = config('roles.special_codes', []);
-            if (isset($validCodes[$specialCode])) {
-                $role = $validCodes[$specialCode];
-            } else {
+            $role = $codeService->getRoleForCode($specialCode);
+            if (!$role) {
                 return redirect()->back()
                     ->withInput($request->except('special_code'))
                     ->withErrors(['special_code' => 'Invalid Special Code. Please contact the committee for the correct code.']);

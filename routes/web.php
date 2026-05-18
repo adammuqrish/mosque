@@ -172,4 +172,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/gamification')->name('a
     Route::post('/tiers', [GamificationAdminController::class, 'storeTier'])->name('tiers.store');
     Route::get('/tiers/{tier}/edit', [GamificationAdminController::class, 'editTier'])->name('tiers.edit');
     Route::put('/tiers/{tier}', [GamificationAdminController::class, 'updateTier'])->name('tiers.update');
+    Route::delete('/tiers/{tier}', [GamificationAdminController::class, 'destroyTier'])->name('tiers.destroy');
+});
+
+// Admin Settings
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/settings', [Admin\AdminSettingsController::class, 'index'])->name('settings');
+    Route::post('/settings/regenerate-admin', [Admin\AdminSettingsController::class, 'regenerateAdmin'])->name('settings.regenerate-admin');
+    Route::post('/settings/regenerate-treasurer', [Admin\AdminSettingsController::class, 'regenerateTreasurer'])->name('settings.regenerate-treasurer');
 });
