@@ -23,8 +23,20 @@ class ZakatAkad extends Model
     protected $casts = [
         'akad_date' => 'date',
         'amount' => 'decimal:2',
-        'muzakki_ic' => 'encrypted',
     ];
+
+    public function getMuzakkiIcAttribute($value)
+    {
+        if ($value === null) return null;
+        if (substr($value, 0, 3) === 'eyJ') {
+            try {
+                return \Illuminate\Support\Facades\Crypt::decrypt($value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+        return $value;
+    }
 
     public function donation()
     {

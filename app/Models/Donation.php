@@ -19,7 +19,6 @@ class Donation extends Model
     protected $casts = [
         'donation_date' => 'datetime',
         'verified_at' => 'datetime',
-        'donor_ic' => 'encrypted',
     ];
 
     public function getTypeLabelAttribute(): string
@@ -167,6 +166,19 @@ class Donation extends Model
     public function getDonorDisplayNameAttribute(): string
     {
         return $this->donor_name ?: 'Anonymous';
+    }
+
+    public function getDonorIcAttribute($value)
+    {
+        if ($value === null) return null;
+        if (substr($value, 0, 3) === 'eyJ') {
+            try {
+                return \Illuminate\Support\Facades\Crypt::decrypt($value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+        return $value;
     }
 
     public function getDonorDisplayIcAttribute(): ?string

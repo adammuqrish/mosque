@@ -4,8 +4,8 @@ PORT=${PORT:-8080}
 
 echo "=== Starting deployment setup ==="
 
-echo "--- Generating APP_KEY ---"
-php artisan key:generate --force --no-interaction -q || echo "APP_KEY OK"
+echo "--- Ensuring APP_KEY is set ---"
+php artisan key:generate --no-interaction -q || echo "APP_KEY already set, skipping"
 
 echo "--- Importing database dump (if exists) ---"
 if [ -f railway_import.sql ]; then
@@ -27,6 +27,10 @@ echo "--- Import complete ---"
 echo "--- Running migrations ---"
 php artisan migrate --force --no-interaction 2>&1 || echo "Migration failed!"
 echo "--- Migrations complete ---"
+
+echo "--- Cleaning up legacy encrypted donor ICs ---"
+php artisan donations:cleanup-donor-ic --no-interaction 2>&1 || true
+echo "--- Cleanup complete ---"
 
 echo "--- Running seeders ---"
 php artisan db:seed --force --no-interaction 2>&1 || true
