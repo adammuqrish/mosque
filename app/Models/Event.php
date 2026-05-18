@@ -37,6 +37,12 @@ class Event extends Model
         'status' => 'open',
     ];
 
+    // Accessor for effective status (returns status attribute)
+    public function getEffectiveStatusAttribute(): string
+    {
+        return $this->status ?? 'open';
+    }
+
     // Relationship: Many-to-Many with Volunteers (Users)
     public function volunteers()
     {
