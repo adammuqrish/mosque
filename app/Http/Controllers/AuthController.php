@@ -31,10 +31,7 @@ class AuthController extends Controller
 
             $user = Auth::user();
             if (!$user->hasVerifiedEmail()) {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'You must verify your email address before logging in. Check your inbox for the verification link.',
-                ])->onlyInput('email');
+                return redirect()->route('verification.notice');
             }
 
             return redirect()->intended('/');
@@ -149,6 +146,10 @@ class AuthController extends Controller
 
     public function showVerifyNotice()
     {
+        if (Auth::user()->hasVerifiedEmail()) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.verify');
     }
 
