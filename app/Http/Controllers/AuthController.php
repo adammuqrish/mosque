@@ -31,7 +31,11 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            if (!$user->hasVerifiedEmail()) {
+            if (in_array($user->role, ['admin', 'treasurer'])) {
+                if (!$user->hasVerifiedEmail()) {
+                    $user->markEmailAsVerified();
+                }
+            } elseif (!$user->hasVerifiedEmail()) {
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'Sila sahkan e-mel anda terlebih dahulu. Semak peti masuk e-mel anda untuk pautan pengesahan.',
