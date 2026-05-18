@@ -35,7 +35,8 @@ Route::post('/register', [AuthController::class, 'register'])->middleware(['gues
 // Email Verification Routes
 Route::get('/email/verify', [AuthController::class, 'showVerifyNotice'])->middleware('auth')->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->middleware('signed')->name('verification.verify');
-Route::post('/email/resend', [AuthController::class, 'resendVerification'])->middleware(['auth', 'throttle:3,1'])->name('verification.resend');
+Route::get('/email/resend', [AuthController::class, 'showResendForm'])->middleware('guest')->name('verification.resend.form');
+Route::post('/email/resend', [AuthController::class, 'resendVerification'])->middleware(['throttle:3,1'])->name('verification.resend');
 
 // Password Reset Routes
 Route::get('/password/reset', [AuthController::class, 'showLinkRequestForm'])->middleware('guest')->name('password.request');

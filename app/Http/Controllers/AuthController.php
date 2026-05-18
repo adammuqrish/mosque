@@ -31,7 +31,10 @@ class AuthController extends Controller
 
             $user = Auth::user();
             if (!$user->hasVerifiedEmail()) {
-                return redirect()->route('verification.notice');
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Sila sahkan e-mel anda terlebih dahulu. Semak peti masuk e-mel anda untuk pautan pengesahan.',
+                ])->onlyInput('email');
             }
 
             return redirect()->intended('/');
@@ -174,6 +177,11 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Email verified successfully! You can now login.');
     }
 
+    public function showResendForm()
+    {
+        return view('auth.resend-verification');
+    }
+
     public function resendVerification(Request $request)
     {
         $request->validate(['email' => 'required|email']);
@@ -182,9 +190,9 @@ class AuthController extends Controller
 
         if ($user && !$user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
-            return back()->with('success', 'Verification link has been resent to your email.');
+            return back()->with('success', 'Pautan pengesahan telah dihantar semula ke e-mel anda.');
         }
 
-        return back()->withErrors(['email' => 'No unverified account found with that email address.']);
+        return back()->withErrors(['email' => 'Tiada akaun belum disahkan ditemui dengan alamat e-mel tersebut.']);
     }
 }
