@@ -38,7 +38,11 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
+        "post-install-cmd": [
+            "chmod -R 777 storage bootstrap/cache"
+        ],
         "post-update-cmd": [
+            "chmod -R 777 storage bootstrap/cache",
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
