@@ -90,6 +90,8 @@ class AuthController extends Controller
             'role' => $role,
         ]);
 
+        $user->sendEmailVerificationNotification();
+
         if (!empty($referralCode) && !in_array($role, ['admin', 'treasurer'])) {
             $referrer = User::where('referred_code', strtoupper(trim($referralCode)))->first();
             app(GamificationService::class)->processReferral($referrer, $user);
