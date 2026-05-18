@@ -85,6 +85,17 @@
                     @enderror
                 </div>
 
+                <!-- End Time -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">End Date & Time</label>
+                    <input type="datetime-local" name="end_time" 
+                        class="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none transition @error('end_time') border-red-500 ring-2 ring-red-200 @enderror"
+                        value="{{ isset($event) && $event->end_time ? $event->end_time->format('Y-m-d\TH:i') : old('end_time') }}" required>
+                    @error('end_time')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Max Volunteers -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Max Volunteers</label>
@@ -506,6 +517,7 @@
             // Fill in form fields
             document.querySelector('input[name="title"]').value = titles[Math.floor(Math.random() * titles.length)];
             document.querySelector('input[name="event_date"]').value = getRandomFutureDate();
+            document.querySelector('input[name="end_time"]').value = getRandomFutureEndDate();
             document.querySelector('input[name="location"]').value = locations[Math.floor(Math.random() * locations.length)];
             document.querySelector('input[name="event_location"]').value = locations[Math.floor(Math.random() * locations.length)];
             document.querySelector('textarea[name="description"]').value = description;
@@ -554,6 +566,14 @@
             const today = new Date();
             const randomDays = Math.floor(Math.random() * 60) + 1;
             const futureDate = new Date(today.getTime() + (randomDays * 24 * 60 * 60 * 1000));
+            return futureDate.toISOString().slice(0, 16);
+        }
+
+        function getRandomFutureEndDate() {
+            const today = new Date();
+            const randomDays = Math.floor(Math.random() * 60) + 1;
+            const randomHours = Math.floor(Math.random() * 4) + 2;
+            const futureDate = new Date(today.getTime() + (randomDays * 24 * 60 * 60 * 1000) + (randomHours * 60 * 60 * 1000));
             return futureDate.toISOString().slice(0, 16);
         }
 

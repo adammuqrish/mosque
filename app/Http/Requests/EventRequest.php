@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\UniqueEventLocation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EventRequest extends FormRequest
@@ -16,7 +17,8 @@ class EventRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string|min:10|max:2000',
-            'event_date' => 'required|date|after:now',
+            'event_date' => ['required', 'date', 'after:now', new UniqueEventLocation()],
+            'end_time' => 'required|date|after:event_date',
             'location' => 'required|string|max:255',
             'event_location' => 'required|string|max:255',
             'max_volunteers' => 'required|integer|min:1|max:10000',
@@ -32,6 +34,8 @@ class EventRequest extends FormRequest
     {
         return [
             'event_date.after' => 'Event date must be in the future.',
+            'end_time.required' => 'Event end time is required.',
+            'end_time.after' => 'End time must be after the start time.',
             'max_volunteers.min' => 'Maximum volunteers must be at least 1.',
             'max_volunteers.max' => 'Maximum volunteers cannot exceed 10,000.',
             'description.min' => 'Description must be at least 10 characters.',

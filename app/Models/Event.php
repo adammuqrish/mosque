@@ -13,6 +13,7 @@ class Event extends Model
         'title',
         'description',
         'event_date',
+        'end_time',
         'location',
         'max_volunteers',
         'required_skills',
@@ -30,18 +31,13 @@ class Event extends Model
         'required_hobbies' => 'array',
         'required_languages' => 'array',
         'event_date' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     // Default status
     protected $attributes = [
         'status' => 'open',
     ];
-
-    // Accessor for effective status (returns status attribute)
-    public function getEffectiveStatusAttribute(): string
-    {
-        return $this->status ?? 'open';
-    }
 
     // Relationship: Many-to-Many with Volunteers (Users)
     public function volunteers()
@@ -120,13 +116,49 @@ class Event extends Model
     // STEP 3: Check if event is open for joining
     public function canJoin(): bool
     {
-        return $this->status === 'open' && !$this->isFull();
+        return $this->status === 'open' && !$this->isFull() && !$this->isPast();
     }
 
     // STEP 4: Check if event is in the past
     public function isPast(): bool
     {
+        if (!$this->event_date) {
+            return false;
+        }
         return $this->event_date->isPast();
+    }
+
+    public static function hasLocationConflict(string $location, string $eventLocation, $start, $end, ?int $excludeId = null): bool
+    {
+        $query = static::where('location', $location)
+            ->where('event_location', $eventLocation)
+            ->where('status', '!=', 'cancelled')
+            ->whereNotNull('end_time')
+            ->where(function ($q) use ($start, $end) {
+                $q->where('event_date', '<', $end)
+                  ->where('end_time', '>', $start);
+            });
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
+    }
+
+    // STEP 4b: Get effective status (real-time, no DB write needed)
+    public function getEffectiveStatusAttribute(): string
+    {
+        if ($this->status === 'cancelled') {
+            return 'cancelled';
+        }
+        if ($this->isPast()) {
+            return 'closed';
+        }
+        if ($this->isFull()) {
+            return 'closed';
+        }
+        return $this->status;
     }
 
     // STEP 5: Check if event can be edited
@@ -140,6 +172,11 @@ class Event extends Model
     {
         // Cannot open if cancelled
         if ($this->status === 'cancelled') {
+            return false;
+        }
+        
+        // Cannot open if past
+        if ($this->isPast()) {
             return false;
         }
         
@@ -164,18 +201,6 @@ class Event extends Model
         }
     }
 
-    protected static function booted()
-    {
-        static::retrieved(function (self $event) {
-            if (!$event->exists || $event->wasRecentlyCreated) {
-                return;
-            }
-            if ($event->status !== 'closed' && $event->status !== 'cancelled' && $event->isPast()) {
-                $event->update(['status' => 'closed']);
-            }
-        });
-    }
-
     // STEP 8: Scope for active/upcoming events
     public function scopeUpcoming($query)
     {
@@ -186,6 +211,7 @@ class Event extends Model
     public function scopeJoinable($query)
     {
         return $query->where('status', 'open')
+            ->where('event_date', '>', now())
             ->whereColumn('max_volunteers', '>', function ($sub) {
                 $sub->selectRaw('COUNT(*)')
                     ->from('event_volunteer')
