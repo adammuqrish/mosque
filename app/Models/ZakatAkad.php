@@ -23,6 +23,7 @@ class ZakatAkad extends Model
     protected $casts = [
         'akad_date' => 'date',
         'amount' => 'decimal:2',
+        'muzakki_ic' => 'encrypted',
     ];
 
     public function donation()

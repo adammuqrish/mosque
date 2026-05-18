@@ -19,6 +19,7 @@ class Donation extends Model
     protected $casts = [
         'donation_date' => 'datetime',
         'verified_at' => 'datetime',
+        'donor_ic' => 'encrypted',
     ];
 
     public function getTypeLabelAttribute(): string
