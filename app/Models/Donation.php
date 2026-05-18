@@ -21,6 +21,26 @@ class Donation extends Model
         'verified_at' => 'datetime',
     ];
 
+    public function getDonorIcAttribute($value)
+    {
+        if ($value === null) return null;
+        if (substr($value, 0, 3) === 'eyJ') {
+            try {
+                return \Illuminate\Support\Facades\Crypt::decrypt($value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+        return $value;
+    }
+
+    public function setDonorIcAttribute($value)
+    {
+        $this->attributes['donor_ic'] = $value !== null
+            ? \Illuminate\Support\Facades\Crypt::encrypt($value)
+            : null;
+    }
+
     public function getTypeLabelAttribute(): string
     {
         switch ($this->type) {

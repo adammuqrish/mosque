@@ -38,6 +38,13 @@ class ZakatAkad extends Model
         return $value;
     }
 
+    public function setMuzakkiIcAttribute($value)
+    {
+        $this->attributes['muzakki_ic'] = $value !== null
+            ? \Illuminate\Support\Facades\Crypt::encrypt($value)
+            : null;
+    }
+
     public function donation()
     {
         return $this->belongsTo(Donation::class);
