@@ -41,8 +41,10 @@ return [
         ],
     ],
 
-    'special_codes' => [
-        env('ADMIN_CODE', 'ADMIN123') => 'admin',
-        env('TREASURER_CODE', 'TREASURER123') => 'treasurer',
-    ],
+    'special_codes' => array_filter([
+        env('ADMIN_CODE') => 'admin',
+        env('TREASURER_CODE') => 'treasurer',
+    ], function ($key) {
+        return is_string($key) && $key !== '';
+    }, ARRAY_FILTER_USE_KEY),
 ];
