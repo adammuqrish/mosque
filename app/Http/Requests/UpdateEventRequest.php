@@ -53,8 +53,8 @@ class UpdateEventRequest extends FormRequest
         $this->merge([
             'title' => strip_tags(trim($this->title)),
             'description' => strip_tags(trim($this->description)),
-            'location' => strip_tags(trim($this->location)),
-            'event_location' => strip_tags(trim($this->event_location)),
+            'location' => strtolower(strip_tags(trim($this->location))),
+            'event_location' => strtolower(strip_tags(trim($this->event_location))),
             'required_skills' => strip_tags(trim($this->required_skills)),
             'required_hobbies' => $this->required_hobbies ? strip_tags(trim($this->required_hobbies)) : null,
             'required_languages' => $this->required_languages ? strip_tags(trim($this->required_languages)) : null,
