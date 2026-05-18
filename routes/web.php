@@ -32,6 +32,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->middleware('guest')->name('register');
 Route::post('/register', [AuthController::class, 'register'])->middleware(['guest', 'throttle:10,1'])->name('register');
 
+// Email Verification Routes
+Route::get('/email/verify', [AuthController::class, 'showVerifyNotice'])->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/resend', [AuthController::class, 'resendVerification'])->middleware(['auth', 'throttle:3,1'])->name('verification.resend');
+
+// Password Reset Routes
+Route::get('/password/reset', [AuthController::class, 'showLinkRequestForm'])->middleware('guest')->name('password.request');
+Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail'])->middleware(['guest', 'throttle:3,1'])->name('password.email');
+Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
+Route::post('/password/reset', [AuthController::class, 'reset'])->middleware(['guest', 'throttle:3,1'])->name('password.update');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update-info', [ProfileController::class, 'updateInfo'])->name('profile.update.info');

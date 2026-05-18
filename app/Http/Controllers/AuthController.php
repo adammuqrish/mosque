@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use App\Services\GamificationService;
@@ -18,20 +21,25 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // STEP 1: Validate credentials
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        // STEP 2: Attempt authentication
         if (Auth::attempt($credentials)) {
-            // STEP 3: Regenerate session for security
             $request->session()->regenerate();
+
+            $user = Auth::user();
+            if (!$user->hasVerifiedEmail()) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'You must verify your email address before logging in. Check your inbox for the verification link.',
+                ])->onlyInput('email');
+            }
+
             return redirect()->intended('/');
         }
 
-        // STEP 4: Return error if authentication fails
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
@@ -52,14 +60,11 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        // STEP 1: Get validated and sanitized data from FormRequest
         $validated = $request->validated();
         $specialCode = $validated['special_code'] ?? '';
         $referralCode = $validated['referral_code'] ?? '';
         $role = 'member';
 
-        // STEP 2: Determine role based on special code
-        // Special codes (ADMIN123, TREASURER123) grant admin/treasurer roles
         if (!empty($specialCode)) {
             $validCodes = config('roles.special_codes', []);
             if (isset($validCodes[$specialCode])) {
@@ -71,19 +76,15 @@ class AuthController extends Controller
             }
         }
 
-        // STEP 3: Validate referral code BEFORE creating user (only for member roles)
-        // If referral code is provided, verify it exists in database
         if (!empty($referralCode) && !in_array($role, ['admin', 'treasurer'])) {
             $referrer = User::where('referred_code', strtoupper(trim($referralCode)))->first();
             if (!$referrer) {
-                // Invalid code: Block registration with clear error message
                 return redirect()->back()
                     ->withInput($request->except('referral_code'))
                     ->withErrors(['referral_code' => 'The referral code you entered does not exist. Please check with your friend for the correct code, or leave this field empty.']);
             }
         }
 
-        // STEP 4: Create user with sanitized data (only after all validations pass)
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -92,13 +93,95 @@ class AuthController extends Controller
             'role' => $role,
         ]);
 
-        // STEP 5: Process referral (code is guaranteed valid at this point)
         if (!empty($referralCode) && !in_array($role, ['admin', 'treasurer'])) {
             $referrer = User::where('referred_code', strtoupper(trim($referralCode)))->first();
             app(GamificationService::class)->processReferral($referrer, $user);
-            return redirect('/login')->with('success', 'Registration successful! Your friend will receive 15 bonus points!');
+            return redirect('/login')->with('success', 'Registration successful! Please verify your email, then login. Your friend will receive 15 bonus points!');
         }
 
-        return redirect('/login')->with('success', 'Registration successful! Please login.');
+        return redirect('/login')->with('success', 'Registration successful! Please check your email to verify your account before logging in.');
+    }
+
+    public function showLinkRequestForm()
+    {
+        return view('auth.passwords.email');
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('success', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function showResetForm(Request $request, $token = null)
+    {
+        return view('auth.passwords.reset', ['token' => $token, 'email' => $request->email]);
+    }
+
+    public function reset(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('success', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
+    }
+
+    public function showVerifyNotice()
+    {
+        return view('auth.verify');
+    }
+
+    public function verify(Request $request)
+    {
+        $user = User::find($request->route('id'));
+
+        if (!$user || !hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+            return redirect()->route('login')->withErrors(['email' => 'Invalid verification link.']);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route('login')->with('success', 'Your email is already verified. Please login.');
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return redirect()->route('login')->with('success', 'Email verified successfully! You can now login.');
+    }
+
+    public function resendVerification(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && !$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            return back()->with('success', 'Verification link has been resent to your email.');
+        }
+
+        return back()->withErrors(['email' => 'No unverified account found with that email address.']);
     }
 }

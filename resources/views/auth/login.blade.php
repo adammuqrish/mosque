@@ -79,7 +79,10 @@
 
                     <!-- Password Input -->
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-gray-700 text-sm font-bold">Password</label>
+                            <a href="{{ route('password.request') }}" class="text-xs text-emerald-600 hover:underline">Forgot Password?</a>
+                        </div>
                         <input id="password" type="password" name="password"
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition @error('password') border-red-500 ring-2 ring-red-200 @enderror"
                             placeholder="********" required>
