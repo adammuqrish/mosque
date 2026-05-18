@@ -4,35 +4,44 @@ namespace App\Transports;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use Swift_Events_EventDispatcher;
+use Swift_Events_EventListener;
 use Swift_Mime_SimpleMessage;
-use Swift_Transport_AbstractTransport;
+use Swift_Transport;
 
-class ResendTransport extends Swift_Transport_AbstractTransport
+class ResendTransport implements Swift_Transport
 {
-    protected Client $http;
-    protected string $apiKey;
+    /** @var Client */
+    protected $http;
 
-    public function __construct(Client $http, string $apiKey, Swift_Events_EventDispatcher $dispatcher = null)
+    /** @var string */
+    protected $apiKey;
+
+    public function __construct(Client $http, $apiKey)
     {
         $this->http = $http;
         $this->apiKey = $apiKey;
-        parent::__construct($dispatcher);
     }
 
-    public function isStarted(): bool
+    public function isStarted()
     {
         return true;
     }
 
-    public function start(): void {}
-
-    public function stop(): void {}
-
-    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null): int
+    public function start()
     {
-        $this->beforeSendPerformed($message);
+    }
 
+    public function stop()
+    {
+    }
+
+    public function ping()
+    {
+        return true;
+    }
+
+    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    {
         $payload = [
             'from' => $this->getFrom($message),
             'to' => $this->getAddresses($message->getTo()),
@@ -61,7 +70,7 @@ class ResendTransport extends Swift_Transport_AbstractTransport
         }
 
         try {
-            $response = $this->http->post('https://api.resend.com/emails', [
+            $this->http->post('https://api.resend.com/emails', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type' => 'application/json',
@@ -69,8 +78,6 @@ class ResendTransport extends Swift_Transport_AbstractTransport
                 'json' => $payload,
                 'timeout' => 15,
             ]);
-
-            $this->afterSendPerformed($message);
 
             $sentCount = count((array) $message->getTo()) + count((array) $message->getCc()) + count((array) $message->getBcc());
             return $sentCount ?: 1;
@@ -80,7 +87,11 @@ class ResendTransport extends Swift_Transport_AbstractTransport
         }
     }
 
-    protected function getFrom(Swift_Mime_SimpleMessage $message): string
+    public function registerPlugin(Swift_Events_EventListener $plugin)
+    {
+    }
+
+    protected function getFrom(Swift_Mime_SimpleMessage $message)
     {
         $from = $message->getFrom();
         if (!$from) {
@@ -91,7 +102,7 @@ class ResendTransport extends Swift_Transport_AbstractTransport
         return $name ? "$name <$email>" : $email;
     }
 
-    protected function getAddresses($addresses): array
+    protected function getAddresses($addresses)
     {
         if (!$addresses) {
             return [];

@@ -172,5 +172,4 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/gamification')->name('a
     Route::post('/tiers', [GamificationAdminController::class, 'storeTier'])->name('tiers.store');
     Route::get('/tiers/{tier}/edit', [GamificationAdminController::class, 'editTier'])->name('tiers.edit');
     Route::put('/tiers/{tier}', [GamificationAdminController::class, 'updateTier'])->name('tiers.update');
-    Route::delete('/tiers/{tier}', [GamificationAdminController::class, 'destroyTier'])->name('tiers.destroy');
 });
