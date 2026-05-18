@@ -188,19 +188,6 @@ class Donation extends Model
         return $this->donor_name ?: 'Anonymous';
     }
 
-    public function getDonorIcAttribute($value)
-    {
-        if ($value === null) return null;
-        if (substr($value, 0, 3) === 'eyJ') {
-            try {
-                return \Illuminate\Support\Facades\Crypt::decrypt($value);
-            } catch (\Exception $e) {
-                return null;
-            }
-        }
-        return $value;
-    }
-
     public function getDonorDisplayIcAttribute(): ?string
     {
         if (!$this->donor_ic) return null;
