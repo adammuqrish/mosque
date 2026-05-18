@@ -15,13 +15,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if ($this->app->bound('swift.transport')) {
-            $this->app->make('swift.transport')->extend('resend', function ($config) {
+        $this->app->afterResolving('swift.transport', function ($transport) {
+            $transport->extend('resend', function ($config) {
                 return new ResendTransport(
                     new Client(),
                     $config['api_key'] ?? config('services.resend.api_key')
                 );
             });
-        }
+        });
     }
 }
