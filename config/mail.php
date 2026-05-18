@@ -71,6 +71,11 @@ return [
             'transport' => 'array',
         ],
 
+        'resend' => [
+            'transport' => 'resend',
+            'api_key' => env('RESEND_API_KEY'),
+        ],
+
         'failover' => [
             'transport' => 'failover',
             'mailers' => [

@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
+use App\Transports\ResendTransport;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,8 +15,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if (config('app.env') === 'production') {
-            URL::forceScheme('https');
-        }
+        $this->app->make('swift.transport')->extend('resend', function ($config) {
+            return new ResendTransport(
+                new Client(),
+                $config['api_key'] ?? config('services.resend.api_key')
+            );
+        });
     }
 }

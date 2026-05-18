@@ -5,18 +5,6 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-$__storage = __DIR__.'/../storage';
-$__cache   = __DIR__.'/../bootstrap/cache';
-if (!is_writable($__storage) || !is_writable($__cache)) {
-    @chmod($__storage, 0777);
-    @chmod($__cache, 0777);
-    if (is_dir($__storage.'/logs')) { @chmod($__storage.'/logs', 0777); }
-    if (is_dir($__storage.'/framework')) { @chmod($__storage.'/framework', 0777); }
-    if (is_dir($__storage.'/framework/views')) { @chmod($__storage.'/framework/views', 0777); }
-    if (is_dir($__storage.'/framework/cache')) { @chmod($__storage.'/framework/cache', 0777); }
-    if (is_dir($__storage.'/framework/sessions')) { @chmod($__storage.'/framework/sessions', 0777); }
-}
-
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
