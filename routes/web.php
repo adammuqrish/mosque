@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\Admin\GamificationAdminController;
+use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\LandingController;
 
 // Landing page — guests see landing, authenticated users go to dashboard
@@ -177,7 +178,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/gamification')->name('a
 
 // Admin Settings
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/settings', [Admin\AdminSettingsController::class, 'index'])->name('settings');
-    Route::post('/settings/regenerate-admin', [Admin\AdminSettingsController::class, 'regenerateAdmin'])->name('settings.regenerate-admin');
-    Route::post('/settings/regenerate-treasurer', [Admin\AdminSettingsController::class, 'regenerateTreasurer'])->name('settings.regenerate-treasurer');
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings');
+    Route::post('/settings/regenerate-admin', [AdminSettingsController::class, 'regenerateAdmin'])->name('settings.regenerate-admin');
+    Route::post('/settings/regenerate-treasurer', [AdminSettingsController::class, 'regenerateTreasurer'])->name('settings.regenerate-treasurer');
 });
