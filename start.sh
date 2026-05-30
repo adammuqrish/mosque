@@ -29,6 +29,10 @@ if [ -f railway_import.sql ]; then
 fi
 echo "--- Import check complete ---"
 
+echo "--- Clearing stale caches ---"
+php artisan config:clear --no-interaction 2>&1 || true
+php artisan cache:clear --no-interaction 2>&1 || true
+
 echo "--- Running migrations ---"
 php artisan migrate --force --no-interaction 2>&1
 if [ $? -ne 0 ]; then
