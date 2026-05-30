@@ -58,7 +58,11 @@ class ZakatAkad extends Model
 
     public function getAkadReferenceAttribute(): string
     {
-        return $this->reference ?? 'ZKT-' . $this->akad_date->format('Ymd') . '-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
+        if ($this->reference) {
+            return $this->reference;
+        }
+        $dateStr = $this->akad_date ? $this->akad_date->format('Ymd') : date('Ymd');
+        return 'ZKT-' . $dateStr . '-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
     }
 
     public function getAmilDisplayAttribute(): string

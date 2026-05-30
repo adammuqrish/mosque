@@ -134,7 +134,7 @@ class LeaderboardService
         foreach ($query->limit($limit)->get() as $memberPoints) {
             $user = $memberPoints->user;
             
-            if ($user->hide_from_leaderboard) {
+            if (!$user || $user->hide_from_leaderboard) {
                 continue;
             }
 

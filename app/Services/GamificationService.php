@@ -346,6 +346,9 @@ class GamificationService
 
     private function isEarlyJoin(Event $event, EventVolunteer $volunteer): bool
     {
+        if (!$volunteer->joined_at || !$event->event_date) {
+            return false;
+        }
         return $volunteer->joined_at->diffInDays($event->event_date) >= 7;
     }
 
