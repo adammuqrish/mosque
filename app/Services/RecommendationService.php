@@ -129,7 +129,6 @@ class RecommendationService
         // STEP 1: Parse user criteria
         $userSkills = $this->parseToArray($profile->skills);
         $userHobbies = $this->parseToArray($profile->hobbies);
-        $userInterests = $this->parseToArray($profile->interests);
         $userLanguages = $this->parseToArray($profile->languages);
         $userLocation = strtolower(trim($profile->location ?? ''));
 
@@ -171,13 +170,6 @@ class RecommendationService
             if ($hobbyMatches > 0) {
                 $matchScore += min($hobbyMatches, 3);
                 $matchReasons[] = 'hobbies';
-            }
-
-            // E. Check Interests Match (+1 point per interest match, max 3)
-            $interestMatches = $this->countMatches($userInterests, $eventHobbies);
-            if ($interestMatches > 0) {
-                $matchScore += min($interestMatches, 3);
-                $matchReasons[] = 'interests';
             }
 
             // Only include if there's at least one match
