@@ -122,7 +122,7 @@
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($myRedemptions as $redemption)
                                     <tr>
-                                        <td class="px-6 py-4 font-medium text-gray-900">{{ $redemption->reward->name }}</td>
+                                        <td class="px-6 py-4 font-medium text-gray-900">{{ $redemption->reward->name ?? 'Deleted Reward' }}</td>
                                         <td class="px-6 py-4 text-red-600">-{{ number_format($redemption->points_spent) }}</td>
                                         <td class="px-6 py-4 text-gray-500">{{ $redemption->redeemed_at->format('d M Y') }}</td>
                                         <td class="px-6 py-4">
@@ -157,7 +157,7 @@
                         @foreach($myRedemptions as $redemption)
                             <div class="p-4 space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-medium text-gray-900 text-sm">{{ $redemption->reward->name }}</span>
+                                    <span class="font-medium text-gray-900 text-sm">{{ $redemption->reward->name ?? 'Deleted Reward' }}</span>
                                     <span class="text-red-600 font-semibold text-sm">-{{ number_format($redemption->points_spent) }} pts</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs text-gray-500">

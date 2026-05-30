@@ -70,7 +70,7 @@
                         <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $donation->donation_date->format('d M Y') }}</td>
                         <td class="px-4 sm:px-6 py-3 text-gray-800"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">{{ $donation->category }}</span></td>
                         <td class="px-4 sm:px-6 py-3 text-gray-800">{{ ucfirst($donation->source) }}</td>
-                        <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $donation->user->name }}</td>
+                        <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $donation->user->name ?? 'Deleted User' }}</td>
                         <td class="px-4 sm:px-6 py-3 text-right font-bold text-green-700">+ RM {{ number_format($donation->amount, 2) }}</td>
                     </tr>
                 @empty
@@ -92,7 +92,7 @@
                     <span><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">{{ $donation->category }}</span></span>
                     <span>{{ ucfirst($donation->source) }}</span>
                 </div>
-                <div class="text-xs text-gray-500">Recorded by: {{ $donation->user->name }}</div>
+                <div class="text-xs text-gray-500">Recorded by: {{ $donation->user->name ?? 'Deleted User' }}</div>
             </div>
         @empty
             <div class="p-4 text-center text-gray-400 text-sm">No donations for this period</div>

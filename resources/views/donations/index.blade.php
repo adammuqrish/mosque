@@ -797,14 +797,14 @@ $breadcrumbs = [
                             <div>
                                 <p class="text-gray-400 font-medium uppercase text-[10px] mb-0.5">Recorded By</p>
                                 <div class="flex items-center gap-1.5">
-                                    @if($donation->user->avatar_url)
-                                    <img src="{{ $donation->user->avatar_url }}" alt="{{ $donation->user->name }}" class="w-4 h-4 rounded-full object-cover">
+                                    @if($donation->user?->avatar_url)
+                                    <img src="{{ $donation->user->avatar_url }}" alt="{{ $donation->user->name ?? '' }}" class="w-4 h-4 rounded-full object-cover">
                                     @else
                                     <div class="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center">
-                                        <span class="text-[8px] text-emerald-700 font-bold">{{ $donation->user->initials }}</span>
+                                        <span class="text-[8px] text-emerald-700 font-bold">{{ $donation->user?->initials ?? '?' }}</span>
                                     </div>
                                     @endif
-                                    <span class="text-gray-700">{{ $donation->user->name }}</span>
+                                    <span class="text-gray-700">{{ $donation->user->name ?? 'Deleted User' }}</span>
                                 </div>
                             </div>
                             @if($donation->donor_ic)
@@ -920,7 +920,7 @@ $breadcrumbs = [
                     </div>
                     <div>
                         <span class="text-gray-400">By:</span>
-                        <span class="text-gray-600 ml-1">{{ $donation->user->name }}</span>
+                        <span class="text-gray-600 ml-1">{{ $donation->user->name ?? 'Deleted User' }}</span>
                     </div>
                     @if($donation->reference)
                     <div class="col-span-2">

@@ -60,22 +60,22 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        @if($redemption->user->avatar_url)
-                                            <img src="{{ $redemption->user->avatar_url }}" alt="{{ $redemption->user->name }}" class="w-10 h-10 rounded-full object-cover">
+                                        @if($redemption->user?->avatar_url)
+                                            <img src="{{ $redemption->user->avatar_url }}" alt="{{ $redemption->user->name ?? '' }}" class="w-10 h-10 rounded-full object-cover">
                                         @else
                                             <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center font-bold text-emerald-700">
-                                                {{ $redemption->user->initials }}
+                                                {{ $redemption->user?->initials ?? '?' }}
                                             </div>
                                         @endif
                                         <div>
-                                            <p class="font-medium text-gray-900">{{ $redemption->user->name }}</p>
-                                            <p class="text-sm text-gray-500">{{ $redemption->user->email }}</p>
+                                            <p class="font-medium text-gray-900">{{ $redemption->user->name ?? 'Deleted User' }}</p>
+                                            <p class="text-sm text-gray-500">{{ $redemption->user->email ?? '' }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <p class="font-medium text-gray-900">{{ $redemption->reward->name }}</p>
-                                    <p class="text-sm text-gray-500">{{ $redemption->reward->category }}</p>
+                                    <p class="font-medium text-gray-900">{{ $redemption->reward->name ?? 'Deleted Reward' }}</p>
+                                    <p class="text-sm text-gray-500">{{ $redemption->reward->category ?? '' }}</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="text-red-600 font-bold">-{{ number_format($redemption->points_spent) }}</span>
@@ -128,22 +128,22 @@
                 @forelse($redemptions as $redemption)
                     <div class="p-4 space-y-3">
                         <div class="flex items-center gap-3">
-                            @if($redemption->user->avatar_url)
-                                <img src="{{ $redemption->user->avatar_url }}" alt="{{ $redemption->user->name }}" class="w-10 h-10 rounded-full object-cover">
+                            @if($redemption->user?->avatar_url)
+                                <img src="{{ $redemption->user->avatar_url }}" alt="{{ $redemption->user->name ?? '' }}" class="w-10 h-10 rounded-full object-cover">
                             @else
                                 <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center font-bold text-emerald-700">
-                                    {{ $redemption->user->initials }}
+                                    {{ $redemption->user?->initials ?? '?' }}
                                 </div>
                             @endif
                             <div>
-                                <p class="font-medium text-gray-900">{{ $redemption->user->name }}</p>
-                                <p class="text-sm text-gray-500">{{ $redemption->user->email }}</p>
+                                <p class="font-medium text-gray-900">{{ $redemption->user->name ?? 'Deleted User' }}</p>
+                                <p class="text-sm text-gray-500">{{ $redemption->user->email ?? '' }}</p>
                             </div>
                         </div>
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="font-medium text-gray-900">{{ $redemption->reward->name }}</p>
-                                <p class="text-xs text-gray-500">{{ $redemption->reward->category }}</p>
+                                <p class="font-medium text-gray-900">{{ $redemption->reward->name ?? 'Deleted Reward' }}</p>
+                                <p class="text-xs text-gray-500">{{ $redemption->reward->category ?? '' }}</p>
                             </div>
                             <span class="text-red-600 font-bold">-{{ number_format($redemption->points_spent) }}</span>
                         </div>

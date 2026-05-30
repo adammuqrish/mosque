@@ -302,7 +302,7 @@
                             <span class="text-gray-400 text-xs italic">—</span>
                         @endif
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-700 font-medium">{{ $req->requester->name }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-700 font-medium">{{ $req->requester->name ?? 'Deleted User' }}</td>
                     <td class="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{{ $req->purpose }}</td>
                     <td class="px-4 py-3 text-sm font-bold text-emerald-600">RM {{ number_format($req->amount, 2) }}</td>
                     <td class="px-4 py-3 text-sm">
@@ -375,19 +375,19 @@
                         </div>
                         @elseif($req->status == 'maker_checked')
                         <div class="text-xs text-gray-500">
-                            <span class="text-orange-600 font-medium">Checked</span> by {{ $req->makerChecker->name ?? '-' }}
+                            <span class="text-orange-600 font-medium">Checked</span> by {{ $req->makerChecker?->name ?? '-' }}
                             <span class="text-gray-400">&bull;</span>
                             {{ $req->maker_checked_at ? $req->maker_checked_at->format('d M Y') : '' }}
                         </div>
                         @elseif($req->status == 'approved')
                         <span class="text-xs text-gray-500">
-                            {{ $req->approver->name ?? '-' }}
+                            {{ $req->approver?->name ?? '-' }}
                             <span class="text-gray-400">&bull;</span>
                             {{ $req->approved_at ? $req->approved_at->format('d M Y') : '' }}
                         </span>
                         @elseif($req->status == 'rejected')
                         <span class="text-xs text-gray-500">
-                            {{ $req->rejector->name ?? '-' }}
+                            {{ $req->rejector?->name ?? '-' }}
                             <span class="text-gray-400">&bull;</span>
                             {{ $req->rejected_at ? $req->rejected_at->format('d M Y') : '' }}
                         </span>
@@ -417,7 +417,7 @@
         <div class="p-4 hover:bg-gray-50 transition">
             <div class="flex items-start justify-between mb-2">
                 <div>
-                    <p class="text-sm font-medium text-gray-800">{{ $req->requester->name }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $req->requester->name ?? 'Deleted User' }}</p>
                     <p class="text-xs text-gray-500">{{ $req->created_at->format('d M Y') }}</p>
                     <div class="flex items-center gap-1.5 mt-1 flex-wrap">
                         @if($req->type === 'zakat')

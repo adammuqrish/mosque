@@ -51,7 +51,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $wd->created_at->format('d M Y') }}</td>
                         <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $wd->purpose }}</td>
-                        <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $wd->requester->name }}</td>
+                        <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $wd->requester->name ?? 'Deleted User' }}</td>
                         <td class="px-4 sm:px-6 py-3 text-gray-800">{{ $wd->approver->name ?? '-' }}</td>
                         <td class="px-4 sm:px-6 py-3 text-right font-bold text-red-700">- RM {{ number_format($wd->amount, 2) }}</td>
                     </tr>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="text-sm text-gray-800">{{ $wd->purpose }}</div>
                 <div class="flex justify-between text-xs text-gray-500">
-                    <span>Requested by: {{ $wd->requester->name }}</span>
+                    <span>Requested by: {{ $wd->requester->name ?? 'Deleted User' }}</span>
                     <span>Approved by: {{ $wd->approver->name ?? '-' }}</span>
                 </div>
             </div>
