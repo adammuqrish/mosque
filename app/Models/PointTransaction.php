@@ -12,6 +12,7 @@ class PointTransaction extends Model
         'points',
         'balance_after',
         'reason',
+        'breakdown',
         'source_type',
         'source_id',
         'admin_id',
