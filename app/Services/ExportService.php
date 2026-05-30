@@ -15,6 +15,7 @@ use App\Models\RewardRedemption;
 use App\Models\TierMilestone;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class ExportService
 {
