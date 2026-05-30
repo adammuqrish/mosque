@@ -96,7 +96,7 @@ class DonationController extends Controller
             'donor_address' => $validated['donor_address'] ?? null,
         ]);
 
-        if (in_array($donation->category, ['zakat', 'zakat_fitr']) && $validated['amil_name']) {
+        if (in_array($donation->category, ['zakat', 'zakat_fitr']) && ($validated['amil_name'] ?? null)) {
             ZakatAkad::create([
                 'donation_id' => $donation->id,
                 'reference' => $receiptService->nextAkadReference(),
