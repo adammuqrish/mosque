@@ -152,6 +152,33 @@ class ReportController extends Controller
                 ->whereYear('approved_at', $m->year)->sum('amount');
         }
 
+        // Fund purpose breakdown (In vs Out per purpose, split by Shariah type)
+        $fundPurposeBreakdown = [];
+        $purposes = \App\Models\FundPurpose::active()->ordered()->pluck('name')->toArray();
+        $categories = ['zakat' => 'Zakat', 'zakat_fitr' => 'Zakat Fitr', 'sadaqah' => 'Sadaqah', 'waqf' => 'Waqf'];
+        foreach ($purposes as $purpose) {
+            foreach ($categories as $catKey => $catLabel) {
+                $purposeIn = (clone $donationBase)->where('fund_purpose', $purpose)->where('category', $catKey)->sum('amount');
+                $purposeOut = (clone $withdrawalBase)->where('fund_purpose', $purpose)->where('type', $catKey)->sum('amount');
+                if ($purposeIn > 0 || $purposeOut > 0) {
+                    $fundPurposeBreakdown[$purpose . '|' . $catKey] = [
+                        'purpose' => $purpose,
+                        'category' => $catLabel,
+                        'in' => $purposeIn,
+                        'out' => $purposeOut,
+                        'net' => $purposeIn - $purposeOut,
+                    ];
+                }
+            }
+        }
+
+        // Gamification stats
+        $gamTotalMembers = \App\Models\MemberPoints::count();
+        $gamTotalEarned = \App\Models\PointTransaction::where('type', 'earned')->sum('points');
+        $gamTotalRedeemed = abs(\App\Models\PointTransaction::where('type', 'redeemed')->sum('points'));
+        $gamTotalBadges = \App\Models\BadgeEarning::count();
+        $gamTotalRedemptions = \App\Models\RewardRedemption::count();
+
 return view('reports.index', compact(
             'donations',
             'withdrawals',
@@ -182,7 +209,13 @@ return view('reports.index', compact(
             'catLabels',
             'chartLabels',
             'chartDonations',
-            'chartExpenses'
+            'chartExpenses',
+            'fundPurposeBreakdown',
+            'gamTotalMembers',
+            'gamTotalEarned',
+            'gamTotalRedeemed',
+            'gamTotalBadges',
+            'gamTotalRedemptions'
         ));
     }
 
