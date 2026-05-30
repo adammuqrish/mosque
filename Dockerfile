@@ -1,3 +1,4 @@
+# Build: v2 - force rebuild 2026-05-30
 FROM php:8.1-cli AS builder
 
 WORKDIR /var/www/html
