@@ -33,6 +33,15 @@ class DashboardController extends Controller
                 : false;
         }
 
+        $myEvents = collect();
+        if ($user && $user->role === 'member') {
+            $myEvents = $user->events()
+                ->wherePivot('status', 'confirmed')
+                ->where('event_date', '>', now())
+                ->orderBy('event_date')
+                ->get();
+        }
+
         $sort = $request->get('sort', 'event_date');
         $direction = $request->get('direction', 'asc');
         
@@ -44,7 +53,7 @@ class DashboardController extends Controller
             $direction = 'asc';
         }
 
-        $openEvents = Event::query()
+        $openEventsQuery = Event::query()
             ->where('status', 'open')
             ->where('event_date', '>', now())
             ->where('max_volunteers', '>', function ($sub) {
@@ -52,8 +61,10 @@ class DashboardController extends Controller
                     ->from('event_volunteer')
                     ->whereColumn('event_id', 'events.id');
             })
-            ->orderBy($sort, $direction)
-            ->paginate(10);
+            ->orderBy($sort, $direction);
+
+        $totalOpenCount = $openEventsQuery->count();
+        $openEvents = $openEventsQuery->paginate(10);
 
         $donationStats = [
             'zakat' => Donation::where('category', 'zakat')->sum('amount'),
@@ -69,9 +80,24 @@ class DashboardController extends Controller
             'cashCount' => Donation::where('source', 'cash')->count(),
         ];
 
+        $myDonationStats = [];
+        if ($user && $user->role === 'member') {
+            $myDonations = $user->donations();
+            $myDonationStats = [
+                'total' => (clone $myDonations)->sum('amount'),
+                'zakat' => (clone $myDonations)->where('category', 'zakat')->sum('amount'),
+                'sadaqah' => (clone $myDonations)->where('category', 'sadaqah')->sum('amount'),
+                'waqf' => (clone $myDonations)->where('category', 'waqf')->sum('amount'),
+                'thisMonth' => (clone $myDonations)->whereMonth('donation_date', now()->month)
+                    ->whereYear('donation_date', now()->year)
+                    ->sum('amount'),
+                'count' => (clone $myDonations)->count(),
+            ];
+        }
+
         return view('dashboard', compact(
-            'recommendedEvents', 'openEvents', 'hasCriteria', 'sort', 'direction',
-            'donationStats'
+            'recommendedEvents', 'openEvents', 'totalOpenCount', 'myEvents', 'myDonationStats',
+            'hasCriteria', 'sort', 'direction', 'donationStats'
         ));
     }
 }
