@@ -228,7 +228,7 @@ class EventController extends Controller
             return redirect()->route('events.manage')->with('error', 'Event not found.');
         }
 
-        $volunteers = $event->volunteers()->get();
+        $volunteers = $event->volunteers()->paginate(12);
         
         return view('events.volunteers', compact('event', 'volunteers'));
     }

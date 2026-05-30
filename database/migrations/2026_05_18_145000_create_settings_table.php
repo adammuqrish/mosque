@@ -8,16 +8,18 @@ class CreateSettingsTable extends Migration
 {
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->string('key')->primary();
-            $table->text('value')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('settings')) {
+            Schema::create('settings', function (Blueprint $table) {
+                $table->string('key')->primary();
+                $table->text('value')->nullable();
+                $table->timestamps();
+            });
 
-        DB::table('settings')->insert([
-            ['key' => 'admin_code', 'value' => env('ADMIN_CODE'), 'created_at' => now(), 'updated_at' => now()],
-            ['key' => 'treasurer_code', 'value' => env('TREASURER_CODE'), 'created_at' => now(), 'updated_at' => now()],
-        ]);
+            DB::table('settings')->insert([
+                ['key' => 'admin_code', 'value' => env('ADMIN_CODE'), 'created_at' => now(), 'updated_at' => now()],
+                ['key' => 'treasurer_code', 'value' => env('TREASURER_CODE'), 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
     }
 
     public function down()

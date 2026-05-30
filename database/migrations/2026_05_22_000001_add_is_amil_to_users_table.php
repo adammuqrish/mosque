@@ -9,7 +9,9 @@ class AddIsAmilToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_amil')->default(false)->after('hide_from_leaderboard');
+            if (!Schema::hasColumn('users', 'is_amil')) {
+                $table->boolean('is_amil')->default(false)->after('hide_from_leaderboard');
+            }
         });
     }
 
