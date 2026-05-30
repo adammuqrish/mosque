@@ -4,6 +4,12 @@
 
 @section('title', __('islamic.navigation.notifications'))
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.notifications')],
+    ];
+@endphp
+
 @section('content')
 
     <!-- STEP 1: Page Header -->
@@ -31,12 +37,35 @@
                 @if($notifications->count() > 0)
                     <form action="{{ route('notifications.mark-all-read') }}" method="POST">
                         @csrf
-                        <button type="submit" class="text-sm text-blue-600 hover:text-blue-800">
+                        <button type="submit" class="bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium px-4 py-2 rounded-lg transition flex items-center gap-2 min-h-[40px]">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             Mark all as read
                         </button>
                     </form>
                 @endif
             </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex items-center gap-2 px-6 py-3 border-b border-gray-100 bg-gray-50/30">
+                <a href="{{ route('notifications.index', ['filter' => 'all']) }}"
+                   class="px-4 py-2 text-sm rounded-lg transition {{ $filter === 'all' ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' }}">
+                    All
+                </a>
+                <a href="{{ route('notifications.index', ['filter' => 'unread']) }}"
+                   class="px-4 py-2 text-sm rounded-lg transition {{ $filter === 'unread' ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' }}">
+                    Unread
+                </a>
+                <a href="{{ route('notifications.index', ['filter' => 'read']) }}"
+                   class="px-4 py-2 text-sm rounded-lg transition {{ $filter === 'read' ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200' }}">
+                    Read
+                </a>
+            </div>
+
+            @if($notifications->hasPages())
+                <div class="px-6 py-3 border-b bg-gray-50/50">
+                    {{ $notifications->links() }}
+                </div>
+            @endif
 
             <div class="divide-y">
                 @forelse($notifications as $notification)
@@ -75,7 +104,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-semibold text-gray-800">{{ $notification->data['title'] ?? 'Notification' }}</p>
-                                <p class="text-sm text-gray-600 mt-1">{!! strip_tags($notification->data['message'] ?? '', '<strong><em><span><br>') !!}</p>
+                                <p class="text-sm text-gray-600 mt-1">{!! preg_replace('/<(\/?)(strong|em|span|br)\b[^>]*>/i', '<$1$2>', strip_tags($notification->data['message'] ?? '', '<strong><em><span><br>')) !!}</p>
                                 <div class="flex items-center gap-4 mt-2">
                                     <span class="text-xs text-gray-400">{{ $notification->created_at->format('d M Y, h:i A') }}</span>
                                     @if(is_null($notification->read_at))

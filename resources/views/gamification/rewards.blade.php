@@ -2,6 +2,13 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('gamification.dashboard')],
+        ['label' => 'Rewards'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
@@ -27,7 +34,7 @@
                class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ !$category ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 shadow-sm' }}">
                 All
             </a>
-            @foreach(['facilities', 'recognition', 'events', 'merchandise_common', 'merchandise_limited'] as $cat)
+            @foreach(\App\Models\Reward::CATEGORIES as $cat)
                 <a href="{{ route('gamification.rewards', ['category' => $cat]) }}"
                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ $category === $cat ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 shadow-sm' }}">
                     {{ ucfirst(str_replace('_', ' ', $cat)) }}
@@ -42,12 +49,8 @@
                     {{-- Header --}}
                     <div class="h-24 bg-gradient-to-br from-amber-400 to-orange-500 relative">
                         <div class="absolute -bottom-8 left-6 w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center text-3xl">
-                            @if($reward->category === 'facilities') 🏛️
-                            @elseif($reward->category === 'recognition') 🏆
-                            @elseif($reward->category === 'events') 🎉
-                            @elseif(str_starts_with($reward->category, 'merchandise')) 🎁
-                            @else 🌟
-                            @endif
+                            @php $categoryEmojis = \App\Models\Reward::CATEGORY_EMOJIS; @endphp
+                            {{ $categoryEmojis[$reward->category] ?? '🌟' }}
                         </div>
                     </div>
 

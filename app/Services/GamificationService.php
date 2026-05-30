@@ -63,14 +63,17 @@ class GamificationService
                 $memberPoints->total_points,
                 "Event completion: {$event->title}",
                 'event',
-                $event->id
+                $event->id,
+                null,
+                null,
+                $pointsBreakdown
             );
 
             $newBadges = $this->checkAndAwardBadges($user, $event);
             $tierUpgrade = $this->checkTierUpgrade($user, $memberPoints);
             
             if ($totalPoints > 0) {
-                $this->notifyPointsEarned($user, $totalPoints, $event);
+                $this->notifyPointsEarned($user, $totalPoints, $event, $pointsBreakdown);
             }
 
             return [
@@ -324,7 +327,8 @@ class GamificationService
         ?string $sourceType = null,
         ?int $sourceId = null,
         ?int $adminId = null,
-        ?string $adminNotes = null
+        ?string $adminNotes = null,
+        ?array $breakdown = null
     ): PointTransaction {
         return PointTransaction::create([
             'user_id' => $user->id,
@@ -332,6 +336,7 @@ class GamificationService
             'points' => $points,
             'balance_after' => $balanceAfter,
             'reason' => $reason,
+            'breakdown' => $breakdown,
             'source_type' => $sourceType,
             'source_id' => $sourceId,
             'admin_id' => $adminId,
@@ -341,20 +346,21 @@ class GamificationService
 
     private function isEarlyJoin(Event $event, EventVolunteer $volunteer): bool
     {
-        $joinedEarly = $volunteer->joined_at->diffInDays($event->event_date) >= 7;
-        $daysUntilEvent = now()->diffInDays($event->event_date, false);
-        return $joinedEarly && $daysUntilEvent > 7;
+        return $volunteer->joined_at->diffInDays($event->event_date) >= 7;
     }
 
-    private function notifyPointsEarned(User $user, int $points, Event $event): void
+    private function notifyPointsEarned(User $user, int $points, Event $event, ?array $breakdown = null): void
     {
-        $user->notify(new PointsEarnedNotification($points, $event));
+        $user->notify(new PointsEarnedNotification($points, $event, $breakdown));
     }
 
     public function generateReferralCode(User $user): string
     {
         $code = strtoupper(substr(md5($user->id . $user->email . time()), 0, 8));
-        $user->update(['referred_code' => $code]);
+        $user->update([
+            'referred_code' => $code,
+            'referred_code_updated_at' => now(),
+        ]);
         return $code;
     }
 

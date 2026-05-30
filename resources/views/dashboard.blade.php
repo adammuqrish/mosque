@@ -22,13 +22,13 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
     </svg>
     <div class="flex-1">
-        <p class="font-semibold text-amber-800 text-sm">{{ __('islamic.events.profile_banner_title') }}</p>
+        <p class="font-semibold text-amber-800 text-sm">Complete Your Profile</p>
         <p class="text-amber-700 text-xs mt-1">
-            {{ __('islamic.events.profile_banner_desc') }}.
+            Set your volunteer preferences to get event recommendations.
         </p>
         <a href="{{ route('profile.index') }}"
             class="inline-block mt-2 text-xs font-bold text-amber-900 underline hover:no-underline">
-            {{ __('islamic.events.profile_banner_cta') }} &rarr;
+            Complete Profile &rarr;
         </a>
     </div>
     {{-- Dismiss button --}}
@@ -70,6 +70,51 @@
         <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Pending</p>
         <p class="text-xl font-bold text-yellow-600 mt-1">{{ $donationStats['pending'] }} entries</p>
         <p class="text-xs text-yellow-500">RM {{ number_format($donationStats['pendingAmount'], 0) }}</p>
+    </div>
+</div>
+@endif
+
+{{-- ============================================================
+         SECTION 1.75: My Contributions (members only)
+         ============================================================ --}}
+@if(Auth::user()->role === 'member')
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+    <div class="px-5 py-3 border-b border-gray-100">
+        <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            My Contributions
+        </h2>
+    </div>
+    <div class="px-5 py-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="text-center">
+                <p class="text-2xl font-bold text-gray-900">RM {{ number_format($myDonationStats['total'] ?? 0, 0) }}</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Total Given</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-amber-600">{{ $myDonationStats['count'] ?? 0 }}</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Donations</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-blue-600">RM {{ number_format($myDonationStats['thisMonth'] ?? 0, 0) }}</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">This Month</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-purple-600">RM {{ number_format(($myDonationStats['zakat'] ?? 0) + ($myDonationStats['waqf'] ?? 0), 0) }}</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Zakat &amp; Waqf</p>
+            </div>
+        </div>
+        @if(($myDonationStats['total'] ?? 0) > 0)
+        <div class="mt-4 pt-3 border-t border-gray-100">
+            <div class="flex items-center gap-3 text-xs text-gray-600">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#C5A059]"></span> Zakat: RM {{ number_format($myDonationStats['zakat'] ?? 0, 0) }}</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Sadaqah: RM {{ number_format($myDonationStats['sadaqah'] ?? 0, 0) }}</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Waqf: RM {{ number_format($myDonationStats['waqf'] ?? 0, 0) }}</span>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 @endif
@@ -128,238 +173,116 @@
 @endif
 
 {{-- ============================================================
-         SECTION 3: Open Community Events (always visible)
+         SECTION 3: My Upcoming Events (members only)
          ============================================================ --}}
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
-
-    <!-- Header Card -->
-    <div class="bg-emerald-700 p-4 sm:p-4 sm:p-6 pattern-islamic">
-        <h1 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-            {{-- Mosque/building icon --}}
-            <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                </path>
+@if(Auth::user()->role === 'member' && $myEvents->isNotEmpty())
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+    <div class="bg-emerald-600 px-5 py-3 flex items-center justify-between">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
-            {{ __('islamic.events.page_title') }}
-        </h1>
-        <p class="text-emerald-100 text-sm mt-1">{{ __('islamic.events.subtitle') }}</p>
+            My Upcoming Events
+        </h2>
+        <a href="{{ route('volunteer.my-events') }}" class="text-xs text-emerald-200 hover:text-white transition font-medium">
+            View All &rarr;
+        </a>
+    </div>
+    <div class="divide-y divide-gray-100">
+        @foreach($myEvents->take(5) as $event)
+        <div class="px-5 py-3 flex items-center justify-between gap-4 hover:bg-gray-50 transition">
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ $event->title }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    {{ $event->event_date->format('d M Y, h:i A') }}
+                    &middot; {{ $event->location ?? $event->event_location ?? '—' }}
+                </p>
+            </div>
+            <form action="{{ route('volunteer.leave', $event->id) }}" method="POST" class="flex-shrink-0" onsubmit="return confirm('Leave this event?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-xs text-red-500 hover:text-red-700 font-medium transition">Leave</button>
+            </form>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
+{{-- ============================================================
+         SECTION 4: Open Community Events (always visible)
+         ============================================================ --}}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-emerald-50 px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+        <h2 class="text-base font-bold text-emerald-800 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            Open Events
+        </h2>
+        <span class="text-xs text-gray-500">{{ $openEvents->count() }} of {{ $totalOpenCount }} available</span>
     </div>
 
-    {{-- Flash messages inside this card --}}
-    @if(session('success'))
-    <div class="mx-6 mt-4 bg-green-50 border-l-4 border-green-500 text-green-800 p-3 rounded text-sm">
-        <strong>{{ __('islamic.flash_messages.success') }}</strong> {{ session('success') }}
-    </div>
-    @endif
-    @if(session('error'))
-    <div class="mx-6 mt-4 bg-red-50 border-l-4 border-red-500 text-red-800 p-3 rounded text-sm">
-        <strong>{{ __('islamic.flash_messages.error') }}:</strong> {{ session('error') }}
-    </div>
-    @endif
-
-    <!-- Desktop Table View -->
-    <div id="events-table" class="hidden md:block p-4 sm:p-6 overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
-                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'title', 'direction' => $sort === 'title' && $direction === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-gray-700">
-                            Event Title
-                            @if($sort === 'title')
-                            <svg class="w-4 h-4 {{ $direction === 'desc' ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                            </svg>
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'event_date', 'direction' => $sort === 'event_date' && $direction === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-gray-700">
-                            Date
-                            @if($sort === 'event_date')
-                            <svg class="w-4 h-4 {{ $direction === 'desc' ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                            </svg>
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'max_volunteers', 'direction' => $sort === 'max_volunteers' && $direction === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-gray-700">
-                            Capacity
-                            @if($sort === 'max_volunteers')
-                            <svg class="w-4 h-4 {{ $direction === 'desc' ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                            </svg>
-                            @endif
-                        </a>
-                    </th>
-                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($openEvents as $event)
-                @php
-                $volunteerCount = $event->volunteers()->count();
-                $spotsLeft = $event->max_volunteers - $volunteerCount;
-                $alreadyJoined = Auth::check() && Auth::user()->events()->where('event_id', $event->id)->exists();
-                @endphp
-                <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $loop->iteration }}</td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-bold text-gray-900">{{ $event->title }}</div>
-                        <div class="text-xs text-gray-500 truncate max-w-xs">{{ Str::limit($event->description, 60) }}</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ $event->event_date->format('d M Y - h:i A') }}
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ $event->location ?? $event->event_location ?? '—' }}
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        @if($spotsLeft <= 3 && $spotsLeft> 0)
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                {{ $spotsLeft }} spot{{ $spotsLeft > 1 ? 's' : '' }} left
-                            </span>
-                            @elseif($spotsLeft <= 0)
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                Full
-                                </span>
-                                @else
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                                    {{ $spotsLeft }} spots
-                                </span>
-                                @endif
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
-                        @if($alreadyJoined)
-                        <span class="text-gray-400 text-xs font-medium">✓ Joined</span>
-                        @elseif(Auth::check() && Auth::user()->role === 'member')
-                        @can('join', $event)
-                        <form action="{{ route('volunteer.join', $event->id) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-4 rounded text-xs shadow-sm transition">
-                                Join
-                            </button>
-                        </form>
-                        @else
-                        <span class="text-gray-400 text-xs">—</span>
-                        @endcan
-                        @else
-                        <span class="text-gray-400 text-xs">Members only</span>
-                        @endif
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="px-4 sm:px-6 py-8 text-center text-sm text-gray-500">
-                        <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        {{ __('islamic.events.empty') }}
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Mobile Card View -->
-    <div class="md:hidden divide-y divide-gray-200">
+    <div class="divide-y divide-gray-100">
         @forelse($openEvents as $event)
         @php
         $volunteerCount = $event->volunteers()->count();
         $spotsLeft = $event->max_volunteers - $volunteerCount;
         $alreadyJoined = Auth::check() && Auth::user()->events()->where('event_id', $event->id)->exists();
         @endphp
-        <div class="p-4 hover:bg-gray-50 transition">
-            <div class="flex items-start justify-between">
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-0.5 rounded-full">{{ $loop->iteration }}</span>
-                        @if($spotsLeft <= 3 && $spotsLeft> 0)
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                {{ $spotsLeft }} spot{{ $spotsLeft > 1 ? 's' : '' }} left
-                            </span>
-                            @elseif($spotsLeft <= 0)
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Full</span>
-                                @else
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                                    {{ $spotsLeft }} spots
-                                </span>
-                                @endif
-                    </div>
-                    <h3 class="text-base font-bold text-gray-900">{{ $event->title }}</h3>
-                    <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ Str::limit($event->description, 80) }}</p>
+        <div class="px-5 py-3 flex flex-col sm:flex-row sm:items-center gap-3 hover:bg-gray-50 transition">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <h3 class="text-sm font-semibold text-gray-900 truncate">{{ $event->title }}</h3>
+                    @if($spotsLeft <= 3 && $spotsLeft> 0)
+                        <span class="text-[10px] font-semibold bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full flex-shrink-0">{{ $spotsLeft }} left</span>
+                        @elseif($spotsLeft <= 0)
+                            <span class="text-[10px] font-semibold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full flex-shrink-0">Full</span>
+                            @else
+                            <span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full flex-shrink-0">{{ $spotsLeft }} spots</span>
+                            @endif
                 </div>
-            </div>
-            <div class="mt-3 flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-600">
-                <div class="flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
+                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
                     <span>{{ $event->event_date->format('d M Y, h:i A') }}</span>
-                </div>
-                <div class="flex items-center gap-1.5 sm:ml-4">
-                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
                     <span>{{ $event->location ?? $event->event_location ?? '—' }}</span>
                 </div>
             </div>
-
-            {{-- Mobile action button --}}
-            <div class="mt-3 flex items-center justify-end">
+            <div class="flex-shrink-0">
                 @if($alreadyJoined)
-                <span class="text-gray-400 text-xs font-medium">✓ Joined</span>
+                <span class="text-xs text-gray-400 font-medium">✓ Joined</span>
                 @elseif(Auth::check() && Auth::user()->role === 'member')
                 @can('join', $event)
                 <form action="{{ route('volunteer.join', $event->id) }}" method="POST">
                     @csrf
-                    <button type="submit"
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-5 rounded text-sm shadow-sm transition">
-                        Join Event
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-4 rounded text-xs shadow-sm transition">
+                        Join
                     </button>
                 </form>
+                @else
+                <span class="text-xs text-gray-400">—</span>
                 @endcan
+                @else
+                <span class="text-xs text-gray-400">Members only</span>
                 @endif
             </div>
         </div>
         @empty
-        <div class="p-8 text-center">
-            <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="px-5 py-8 text-center">
+            <svg class="w-10 h-10 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
-            <p class="text-gray-500">{{ __('islamic.events.empty') }}</p>
+            <p class="text-sm text-gray-500">{{ __('islamic.events.empty') }}</p>
         </div>
         @endforelse
     </div>
 
-    @if($openEvents->hasPages())
-    <div id="dashboard-pagination" class="px-4 sm:px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-center md:hidden">
-        {{ $openEvents->appends(request()->except('page'))->links() }}
+    @if($totalOpenCount > $openEvents->count() && Auth::user()->role === 'admin')
+    <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 text-center">
+        <a href="{{ route('events.manage') }}" class="text-sm text-emerald-600 hover:text-emerald-800 font-medium transition">
+            View all {{ $totalOpenCount }} events &rarr;
+        </a>
     </div>
     @endif
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('page')) {
-            const table = document.getElementById('events-table');
-            if (table) {
-                setTimeout(() => {
-                    table.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 100);
-            }
-        }
-    });
-</script>
 
 @endsection

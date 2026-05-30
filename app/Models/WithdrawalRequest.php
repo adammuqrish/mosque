@@ -9,23 +9,53 @@ class WithdrawalRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['requested_by', 'type', 'amount', 'purpose', 'status', 'approved_by', 'approved_at', 'rejection_reason'];
+    protected $fillable = ['requested_by', 'type', 'fund_purpose', 'amount', 'purpose', 'status', 'approved_by', 'approved_at', 'rejected_by', 'rejected_at', 'rejection_reason', 'maker_checked_by', 'maker_checked_at'];
 
     protected $casts = [
-        'approved_at' => 'datetime', //supaya boleh guna format('d M Y') kat blade
+        'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
+        'maker_checked_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
-    // Relationship: Who made the request?
     public function requester()
     {
         return $this->belongsTo(User::class, 'requested_by');
     }
 
-    // Relationship: Who approved it?
     public function approver()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function rejector()
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    public function makerChecker()
+    {
+        return $this->belongsTo(User::class, 'maker_checked_by');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(WithdrawalDocument::class);
+    }
+
+    public function needsMakerChecker(): bool
+    {
+        return $this->amount > 1000;
+    }
+
+    public function isFullyApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isMakerChecked(): bool
+    {
+        return $this->status === 'maker_checked';
     }
 }

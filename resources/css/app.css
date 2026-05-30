@@ -1,0 +1,529 @@
+/**
+ * ============================================================================
+ * MOSQUE MANAGEMENT SYSTEM — DESIGN SYSTEM CSS
+ * ============================================================================
+ * 
+ * Design System Overview:
+ * - Spacing Scale: xs(4px), sm(8px), md(16px), lg(24px), xl(32px), 2xl(48px)
+ * - Border Radius: sm(6px), md(8px), lg(12px), xl(16px), full(9999px)
+ * - Primary Color: #0B6E4F (Deep Islamic Green)
+ * - Accent Colors: Gold (#C5A059), Midnight Blue (#1B2A4A)
+ * - Body Background: #FAFAF5 (Warm Ivory)
+ * - Typography: Amiri (headings), system-ui (body) with antialiased smoothing
+ * - Patterns: Islamic geometric cross pattern (subtle)
+ * 
+ * Usage: Apply these classes alongside Tailwind utilities for consistency.
+ * Example: <button class="btn btn-primary">Save</button>
+ */
+
+/* ============================================================================
+   STEP 1: CSS CUSTOM PROPERTIES (Design Tokens)
+   ============================================================================ */
+
+@layer base {
+    :root {
+        /* Spacing Scale */
+        --space-xs: 0.25rem;    /* 4px */
+        --space-sm: 0.5rem;      /* 8px */
+        --space-md: 1rem;        /* 16px */
+        --space-lg: 1.5rem;     /* 24px */
+        --space-xl: 2rem;       /* 32px */
+        --space-2xl: 3rem;      /* 48px */
+
+        /* Border Radius Scale */
+        --radius-sm: 0.375rem;  /* 6px */
+        --radius-md: 0.5rem;    /* 8px */
+        --radius-lg: 0.75rem;   /* 12px */
+        --radius-xl: 1rem;      /* 16px */
+
+        /* Primary Colors — Islamic Green Palette */
+        --color-primary: #0B6E4F;        /* Deep Islamic Green */
+        --color-primary-hover: #084B3B;  /* Darker Green */
+        --color-primary-light: #D4EDDA;  /* Soft Green */
+
+        /* Gold Accent — Inspired by Islamic Art */
+        --color-gold: #C5A059;           /* Muted Gold */
+        --color-gold-hover: #B08D45;     /* Darker Gold */
+        --color-gold-light: #F5E6C8;     /* Soft Gold Background */
+
+        /* Midnight Blue — For Headers & Depth */
+        --color-midnight: #1B2A4A;       /* Deep Blue */
+
+        /* Shadow Levels */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+        /* Font Smoothing */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* ============================================================================
+   STEP 1B: ISLAMIC GEOMETRIC PATTERN (Subtle Background)
+   ============================================================================ */
+
+/* 8-point star geometric pattern — very subtle, for headers/footers */
+.pattern-islamic {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Gold border accent for card headers */
+.card-header-gold {
+    border-top: 3px solid var(--color-gold);
+}
+
+/* Warm ivory body background */
+.bg-islamic {
+    background-color: #FAFAF5;
+}
+
+/* Gold accent utility classes */
+.text-gold {
+    color: var(--color-gold);
+}
+
+.bg-gold {
+    background-color: var(--color-gold);
+}
+
+.bg-gold-light {
+    background-color: var(--color-gold-light);
+}
+
+.bg-midnight {
+    background-color: var(--color-midnight);
+}
+
+/* ============================================================================
+   STEP 2: SCROLLBAR STYLING
+   ============================================================================ */
+
+/* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9; /* gray-100 */
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1; /* slate-300 */
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; /* slate-400 */
+}
+
+/* ============================================================================
+   STEP 3: SELECTION STYLING
+   ============================================================================ */
+
+::selection {
+    background-color: var(--color-gold-light);
+    color: var(--color-primary);
+}
+
+::-moz-selection {
+    background-color: var(--color-gold-light);
+    color: var(--color-primary);
+}
+
+/* ============================================================================
+   STEP 4: FOCUS RING STYLING
+   ============================================================================ */
+
+/* Consistent focus ring for accessibility */
+.focus-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(11, 110, 79, 0.3); /* Islamic green with opacity */
+}
+
+/* ============================================================================
+   STEP 5: REUSABLE BUTTON COMPONENTS
+   ============================================================================ */
+
+/* Primary Button — Main call-to-action */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    min-height: 44px; /* Touch target minimum */
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(11, 110, 79, 0.3);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-sm {
+    min-height: 36px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-md {
+    min-height: 44px;
+    padding: 0.625rem 1.5rem;
+    font-size: 0.875rem;
+}
+
+.btn-lg {
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+    background-color: #f1f5f9; /* gray-100 */
+    color: #374151; /* gray-700 */
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #e2e8f0; /* gray-200 */
+}
+
+.btn-danger {
+    background-color: #dc2626; /* red-600 */
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: #b91c1c; /* red-700 */
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #d1d5db; /* gray-300 */
+    color: #374151;
+}
+
+.btn-outline:hover:not(:disabled) {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+/* ============================================================================
+   STEP 6: CARD COMPONENT
+   ============================================================================ */
+
+/* Standard card wrapper */
+.card {
+    background-color: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #f1f5f9; /* Subtle border for depth */
+    overflow: hidden;
+}
+
+/* Card header section */
+.card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9; /* gray-100 */
+    background-color: #fafafa; /* Slightly off-white for depth */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Card body section */
+.card-body {
+    padding: 1.5rem;
+}
+
+/* ============================================================================
+   STEP 7: FORM INPUT COMPONENT
+   ============================================================================ */
+
+.form-input {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    transition: all 0.15s ease-in-out;
+    background-color: white;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(11, 110, 79, 0.15);
+}
+
+.form-input:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.form-input.error {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* Form label styling */
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+/* Form error message */
+.form-error {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #dc2626;
+    margin-top: 0.25rem;
+}
+
+/* ============================================================================
+   STEP 8: BADGE / PILL COMPONENT
+   ============================================================================ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px; /* full */
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: var(--color-primary-light);
+    color: #065f46;
+}
+
+.badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-neutral {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+/* ============================================================================
+   STEP 9: SECTION HEADER (Inside Cards)
+   ============================================================================ */
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================================================
+   STEP 10: EMPTY STATE COMPONENT
+   ============================================================================ */
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-state svg {
+    width: 3rem;
+    height: 3rem;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+/* ============================================================================
+   STEP 11: ERROR MESSAGE COMPONENT
+   ============================================================================ */
+
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border-left: 4px solid;
+}
+
+.alert-error {
+    background-color: #fef2f2;
+    border-left-color: #dc2626;
+    color: #991b1b;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    border-left-color: #16a34a;
+    color: #166534;
+}
+
+.alert-warning {
+    background-color: #fffbeb;
+    border-left-color: #d97706;
+    color: #92400e;
+}
+
+/* ============================================================================
+   STEP 12: TABLE COMPONENT
+   ============================================================================ */
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background-color: #f9fafb;
+}
+
+.data-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* ============================================================================
+   STEP 13: ANIMATIONS
+   ============================================================================ */
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slideUp {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+/* Pulse animation for status indicators */
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animate-pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ============================================================================
+   STEP 14: PAGE LAYOUT HELPERS
+   ============================================================================ */
+
+/* Page header — standard page title with icon */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.page-header p {
+    color: #6b7280;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Container spacing */
+.container-page {
+    max-width: 80rem; /* max-w-5xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container-page {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-page {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}

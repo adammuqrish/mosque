@@ -2,6 +2,13 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('gamification.dashboard')],
+        ['label' => 'Badges'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,7 +33,7 @@
                                     @if($badge->icon_url)
                                         <img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" class="w-10 h-10 object-contain">
                                     @elseif($badge->is_raw_svg)
-                                        {!! $badge->icon_svg !!}
+                                        @safe_svg($badge->icon_svg)
                                     @else
                                         {{ $badge->fallback_emoji }}
                                     @endif
@@ -64,7 +71,7 @@
                                 @if($badge->icon_url)
                                     <img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" class="w-10 h-10 object-contain grayscale">
                                 @elseif($badge->is_raw_svg)
-                                    {!! $badge->icon_svg !!}
+                                    @safe_svg($badge->icon_svg)
                                 @else
                                     {{ $badge->fallback_emoji }}
                                 @endif

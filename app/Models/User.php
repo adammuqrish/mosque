@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'referred_code',
         'referred_by',
         'hide_from_leaderboard',
+        'is_amil',
     ];
 
     protected $hidden = [
@@ -35,7 +36,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'referred_code_updated_at' => 'datetime',
         'hide_from_leaderboard' => 'boolean',
+        'is_amil' => 'boolean',
     ];
 
     public function volunteerProfile()
@@ -161,6 +164,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isVolunteer(): bool
     {
         return $this->role === 'member';
+    }
+
+    public function isAmil(): bool
+    {
+        return $this->is_amil === true;
+    }
+
+    public function scopeAmils($query)
+    {
+        return $query->where('is_amil', true);
     }
 
     public function hasPermission(string $permission): bool

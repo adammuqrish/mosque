@@ -4,6 +4,12 @@
 
 @section('title', __('islamic.navigation.transparency'))
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.transparency')],
+    ];
+@endphp
+
 @section('content')
 
 <!-- STEP 1: Page Header -->
@@ -119,19 +125,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('page')) {
-            const table = document.getElementById('expenses-table');
-            if (table) {
-                setTimeout(() => {
-                    table.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            }
-        }
-    });
-</script>
+
 
 @endsection
 

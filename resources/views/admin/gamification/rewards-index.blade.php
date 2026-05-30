@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
+        ['label' => 'Rewards'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">

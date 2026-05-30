@@ -301,7 +301,7 @@
         {{-- Stats grid --}}
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
             {{-- Zakat Fund --}}
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-[#FDF6E3] rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-[#C5A059]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,11 +310,12 @@
                     </div>
                     <span class="text-[#64748B] text-xs font-medium">Zakat</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-bold text-[#C5A059]">RM {{ number_format($zakatTotal ?? 0, 2) }}</p>
+                <p class="text-sm lg:text-lg font-bold text-[#C5A059] whitespace-nowrap">RM {{ number_format($zakatTotal ?? 0, 2) }}</p>
+                <div class="flex items-center gap-1 mt-2 min-h-[18px]"></div>
             </div>
 
             {{-- Zakat Fitr Fund --}}
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,11 +324,12 @@
                     </div>
                     <span class="text-[#64748B] text-xs font-medium">Zakat Fitr</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-bold text-amber-600">RM {{ number_format($zakatFitrTotal ?? 0, 2) }}</p>
+                <p class="text-sm lg:text-lg font-bold text-amber-600 whitespace-nowrap">RM {{ number_format($zakatFitrTotal ?? 0, 2) }}</p>
+                <div class="flex items-center gap-1 mt-2 min-h-[18px]"></div>
             </div>
 
             {{-- Sadaqah Fund --}}
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,11 +338,12 @@
                     </div>
                     <span class="text-[#64748B] text-xs font-medium">Sadaqah</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-bold text-blue-600">RM {{ number_format($sadaqahTotal ?? 0, 2) }}</p>
+                <p class="text-sm lg:text-lg font-bold text-blue-600 whitespace-nowrap">RM {{ number_format($sadaqahTotal ?? 0, 2) }}</p>
+                <div class="flex items-center gap-1 mt-2 min-h-[18px]"></div>
             </div>
 
             {{-- Volunteers --}}
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,14 +352,14 @@
                     </div>
                     <span class="text-[#64748B] text-xs font-medium">Active Volunteers</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ $volunteerCount ?? 0 }}</p>
-                <div class="flex items-center gap-1 mt-2">
+                <p class="text-sm lg:text-lg font-bold text-purple-600 whitespace-nowrap">{{ $volunteerCount ?? 0 }}</p>
+                <div class="flex items-center gap-1 mt-2 min-h-[18px]">
                     <span class="text-purple-500 text-xs font-medium">{{ $eventCount ?? 0 }} events completed</span>
                 </div>
             </div>
 
             {{-- Waqf Fund --}}
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-lift animate-on-scroll flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -365,8 +368,8 @@
                     </div>
                     <span class="text-[#64748B] text-xs font-medium">Waqf Fund</span>
                 </div>
-                <p class="text-2xl sm:text-3xl font-bold text-purple-600">RM {{ number_format($waqfTotal ?? 0, 2) }}</p>
-                <div class="flex items-center gap-1 mt-2">
+                <p class="text-sm lg:text-lg font-bold text-purple-600 whitespace-nowrap">RM {{ number_format($waqfTotal ?? 0, 2) }}</p>
+                <div class="flex items-center gap-1 mt-2 min-h-[18px]">
                     <span class="text-purple-500 text-xs font-medium">Endowment</span>
                 </div>
             </div>
@@ -434,7 +437,7 @@
                     <span class="bg-[#FDF6E3] text-[#C5A059] text-[10px] font-bold px-2 py-0.5 rounded-full">OBLIGATORY</span>
                 </div>
                 <p class="text-[#64748B] text-sm leading-relaxed">The obligatory annual contribution of 2.5% of surplus wealth — one of the Five Pillars of Islam.</p>
-                <a href="{{ auth()->check() ? route('donations.index') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                <a href="{{ route('donations.index') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Contribute Now
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -454,7 +457,7 @@
                     <span class="bg-[#E8F5E9] text-[#0B6E4F] text-[10px] font-bold px-2 py-0.5 rounded-full">VOLUNTARY</span>
                 </div>
                 <p class="text-[#64748B] text-sm leading-relaxed">Voluntary charity given out of compassion. Every act of kindness is Sadaqah — no amount is too small.</p>
-                <a href="{{ auth()->check() ? route('donations.index') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                <a href="{{ route('donations.index') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Contribute Now
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -474,7 +477,7 @@
                     <span class="bg-blue-50 text-blue-500 text-[10px] font-bold px-2 py-0.5 rounded-full">ONGOING</span>
                 </div>
                 <p class="text-[#64748B] text-sm leading-relaxed">Ongoing charity that continues to benefit others — your reward multiplies even after you're gone.</p>
-                <a href="{{ auth()->check() ? route('donations.index') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                <a href="{{ route('donations.index') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Contribute Now
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -494,7 +497,7 @@
                     <span class="bg-purple-50 text-purple-500 text-[10px] font-bold px-2 py-0.5 rounded-full">ENDOWMENT</span>
                 </div>
                 <p class="text-[#64748B] text-sm leading-relaxed">A permanent endowment that generates ongoing benefits for the community — a legacy of lasting impact.</p>
-                <a href="{{ auth()->check() ? route('donations.index') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                <a href="{{ route('donations.index') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Contribute Now
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -514,7 +517,7 @@
                     <span class="bg-amber-50 text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded-full">SPENDING</span>
                 </div>
                 <p class="text-[#64748B] text-sm leading-relaxed">Spending in the way of Allah — supporting mosque operations, education, and community programs.</p>
-                <a href="{{ auth()->check() ? route('donations.index') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                <a href="{{ route('donations.index') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Contribute Now
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -534,7 +537,7 @@
                     <span class="bg-[#E8F5E9] text-[#0B6E4F] text-[10px] font-bold px-2 py-0.5 rounded-full">YOUR TIME</span>
                 </div>
                 <p class="text-[#64748B] text-sm leading-relaxed">Give your time and skills to the community. Every hour of service is a form of worship.</p>
-                <a href="{{ auth()->check() ? route('volunteer.my-events') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                <a href="{{ route('volunteer.my-events') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Join Events
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -557,7 +560,7 @@
                 <h2 class="font-heading text-3xl sm:text-4xl font-bold text-[#1A1A2E] mt-3">Upcoming Events</h2>
                 <p class="text-[#64748B] mt-2">Join our community events and earn rewards for your participation.</p>
             </div>
-            <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] font-semibold text-sm hover:gap-2 transition-all whitespace-nowrap">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 text-[#0B6E4F] font-semibold text-sm hover:gap-2 transition-all whitespace-nowrap">
                 View All Events
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -764,7 +767,7 @@
                         <span class="text-[#64748B] text-sm">Verified by mosque committee members</span>
                     </li>
                 </ul>
-                <a href="{{ auth()->check() ? route('transparency.index') : route('register') }}" class="inline-flex items-center gap-2 bg-[#0B6E4F] hover:bg-[#084B3B] text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition mt-8">
+                <a href="{{ route('transparency.index') }}" class="inline-flex items-center gap-2 bg-[#0B6E4F] hover:bg-[#084B3B] text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition mt-8">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>

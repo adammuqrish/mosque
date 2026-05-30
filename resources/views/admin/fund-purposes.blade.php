@@ -11,9 +11,6 @@
     <p class="text-gray-500 text-sm mt-1">Add, edit, or remove fund purpose suggestions for the donation form.</p>
 </div>
 
-@if(session('success'))
-    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm font-medium">{{ session('success') }}</div>
-@endif
 
 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-lg font-bold text-gray-800 mb-4">Add New Purpose</h2>
@@ -52,9 +49,19 @@
                         </form>
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-600">{{ $p->sort_order }}</td>
-                    <td class="px-6 py-3 text-sm">{{ $p->is_active ? 'Yes' : 'No' }}</td>
                     <td class="px-6 py-3 text-sm">
-                        <button type="button" onclick="showConfirmModal('Delete Fund Purpose', 'Delete this fund purpose? It will no longer appear as a suggestion chip.', 'Delete', 'bg-red-600 hover:bg-red-700', '{{ route('donations.fund-purposes.destroy', $p) }}', 'DELETE')" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                        @if($p->is_active)
+                            <span class="text-emerald-600 text-xs font-semibold">Active</span>
+                        @else
+                            <span class="text-gray-400 text-xs">Inactive</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-3 text-sm">
+                        @if($p->is_active)
+                            <button type="button" onclick="showConfirmModal('Deactivate Fund Purpose', 'Deactivate this fund purpose? It will no longer appear as a suggestion chip but existing donation records will be preserved.', 'Deactivate', 'bg-orange-600 hover:bg-orange-700', '{{ route('donations.fund-purposes.toggle-active', $p) }}', 'PATCH')" class="text-orange-600 hover:text-orange-800 text-sm font-medium">Deactivate</button>
+                        @else
+                            <button type="button" onclick="showConfirmModal('Activate Fund Purpose', 'Activate this fund purpose? It will reappear as a suggestion chip on the donation form.', 'Activate', 'bg-emerald-600 hover:bg-emerald-700', '{{ route('donations.fund-purposes.toggle-active', $p) }}', 'PATCH')" class="text-emerald-600 hover:text-emerald-800 text-sm font-medium">Activate</button>
+                        @endif
                     </td>
                 </tr>
                 @empty
@@ -76,10 +83,14 @@
             </div>
             <div class="flex items-center gap-4 text-xs text-gray-500">
                 <span>Sort: {{ $p->sort_order }}</span>
-                <span>{{ $p->is_active ? 'Active' : 'Inactive' }}</span>
+                <span class="@if($p->is_active) text-emerald-600 font-semibold @else text-gray-400 @endif">{{ $p->is_active ? 'Active' : 'Inactive' }}</span>
             </div>
             <div class="flex items-center gap-2 pt-1">
-                <button type="button" onclick="showConfirmModal('Delete Fund Purpose', 'Delete this fund purpose? It will no longer appear as a suggestion chip.', 'Delete', 'bg-red-600 hover:bg-red-700', '{{ route('donations.fund-purposes.destroy', $p) }}', 'DELETE')" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                @if($p->is_active)
+                    <button type="button" onclick="showConfirmModal('Deactivate Fund Purpose', 'Deactivate this fund purpose? It will no longer appear as a suggestion chip but existing donation records will be preserved.', 'Deactivate', 'bg-orange-600 hover:bg-orange-700', '{{ route('donations.fund-purposes.toggle-active', $p) }}', 'PATCH')" class="text-orange-600 hover:text-orange-800 text-sm font-medium">Deactivate</button>
+                @else
+                    <button type="button" onclick="showConfirmModal('Activate Fund Purpose', 'Activate this fund purpose? It will reappear as a suggestion chip on the donation form.', 'Activate', 'bg-emerald-600 hover:bg-emerald-700', '{{ route('donations.fund-purposes.toggle-active', $p) }}', 'PATCH')" class="text-emerald-600 hover:text-emerald-800 text-sm font-medium">Activate</button>
+                @endif
             </div>
         </div>
         @empty

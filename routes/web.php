@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\Admin\GamificationAdminController;
 use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\AmilAdminController;
 use App\Http\Controllers\LandingController;
 
 // Landing page — guests see landing, authenticated users go to dashboard
@@ -70,20 +71,26 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin,treasurer'])->group(function () {
     Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
+    Route::get('/donations/{id}/akad/print', [DonationController::class, 'printAkad'])->name('donations.akad.print');
+    Route::get('/donations/{id}/receipt/print', [DonationController::class, 'printReceipt'])->name('donations.receipt.print');
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
     Route::get('/donations/batch', [DonationController::class, 'batchForm'])->name('donations.batch.form');
     Route::post('/donations/batch', [DonationController::class, 'batchStore'])->name('donations.batch.store');
+    Route::get('/donations/bulk', [DonationController::class, 'bulkForm'])->name('donations.bulk.form');
+    Route::post('/donations/bulk', [DonationController::class, 'bulkStore'])->name('donations.bulk.store');
     Route::get('/donations/fund-purposes', [DonationController::class, 'fundPurposeIndex'])->name('donations.fund-purposes');
     Route::post('/donations/fund-purposes', [DonationController::class, 'fundPurposeStore'])->name('donations.fund-purposes.store');
     Route::put('/donations/fund-purposes/{fundPurpose}', [DonationController::class, 'fundPurposeUpdate'])->name('donations.fund-purposes.update');
     Route::delete('/donations/fund-purposes/{fundPurpose}', [DonationController::class, 'fundPurposeDestroy'])->name('donations.fund-purposes.destroy');
-    Route::patch('/donations/{id}/confirm', [DonationController::class, 'confirm'])->name('donations.confirm');
-    Route::patch('/donations/{id}/dispute', [DonationController::class, 'dispute'])->name('donations.dispute');
-    Route::get('/donations/{id}/akad/print', [DonationController::class, 'printAkad'])->name('donations.akad.print');
+    Route::patch('/donations/fund-purposes/{fundPurpose}/toggle-active', [DonationController::class, 'fundPurposeToggleActive'])->name('donations.fund-purposes.toggle-active');
 
     Route::post('/withdrawals', [WithdrawalController::class, 'store'])->name('withdrawals.store');
+    Route::post('/withdrawals/{id}/documents', [WithdrawalController::class, 'uploadDocuments'])->name('withdrawals.documents');
 
     // Event Management Routes
     Route::get('/events/manage', [EventController::class, 'index'])->name('events.manage');
@@ -125,7 +132,11 @@ Route::middleware(['auth', 'role:admin,treasurer'])->group(function () {
 Route::middleware(['auth', 'role:treasurer'])->group(function () {
     Route::post('/withdrawals/{id}/approve', [WithdrawalController::class, 'approve'])->name('withdrawals.approve');
     Route::post('/withdrawals/{id}/reject', [WithdrawalController::class, 'reject'])->name('withdrawals.reject');
+    Route::patch('/donations/{id}/confirm', [DonationController::class, 'confirm'])->name('donations.confirm');
+    Route::patch('/donations/{id}/dispute', [DonationController::class, 'dispute'])->name('donations.dispute');
 });
+
+
 
 // Gamification Routes (All authenticated users)
 Route::middleware(['auth'])->group(function () {
@@ -181,4 +192,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings');
     Route::post('/settings/regenerate-admin', [AdminSettingsController::class, 'regenerateAdmin'])->name('settings.regenerate-admin');
     Route::post('/settings/regenerate-treasurer', [AdminSettingsController::class, 'regenerateTreasurer'])->name('settings.regenerate-treasurer');
+
+    // Amil Management
+    Route::get('/amils', [AmilAdminController::class, 'index'])->name('amils');
+    Route::post('/amils/{user}/toggle', [AmilAdminController::class, 'toggle'])->name('amils.toggle');
 });

@@ -4,6 +4,12 @@
 
 @section('title', 'My Volunteer Activities')
 
+@php
+    $breadcrumbs = [
+        ['label' => 'My Events'],
+    ];
+@endphp
+
 @section('content')
 
 <!-- STEP 1: Page Header -->
@@ -37,16 +43,24 @@
             </div>
             <div class="h-10 w-px bg-white/30"></div>
             <div class="text-center">
-                <p class="text-2xl font-bold text-blue-200">{{ $stats['confirmed'] }}</p>
+                <p class="text-2xl font-bold text-white">{{ $stats['confirmed'] }}</p>
                 <p class="text-xs opacity-80">Confirmed</p>
             </div>
             <div class="text-center">
-                <p class="text-2xl font-bold text-green-200">{{ $stats['completed'] }}</p>
+                <p class="text-2xl font-bold text-white">{{ $stats['completed'] }}</p>
                 <p class="text-xs opacity-80">Completed</p>
             </div>
-            <div class="text-center">
-                <p class="text-2xl font-bold text-red-200">{{ $stats['absent'] }}</p>
-                <p class="text-xs opacity-80">Absent</p>
+            <div class="text-center relative" x-data="{ showTip: false }">
+                <p class="text-2xl font-bold text-white">{{ $stats['absent'] }}</p>
+                <p class="text-xs opacity-80 flex items-center justify-center gap-1">
+                    Absent
+                    <span @mouseenter="showTip = true" @mouseleave="showTip = false" class="relative cursor-help">
+                        <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span x-show="showTip" x-transition.opacity.duration.100ms class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-lg z-10" @click.away="showTip = false">
+                            Registered but did not attend
+                        </span>
+                    </span>
+                </p>
             </div>
         </div>
     </div>
@@ -118,13 +132,26 @@
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
                                 {{ $event->event_date->format('D, d M Y') }}
-                                @if($event->isPast())
+                                @if($event->status == 'cancelled')
+                                    <span class="ml-2 text-xs text-red-600 font-semibold">(Cancelled)</span>
+                                @elseif($event->isPast())
                                     <span class="ml-2 text-xs text-gray-400">(Past)</span>
                                 @else
                                     <span class="ml-2 text-xs text-emerald-600">(Upcoming)</span>
                                 @endif
                             </p>
                         </div>
+
+                        @if($event->status == 'cancelled')
+                            <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center gap-2 text-red-700">
+                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    <span class="text-sm font-semibold">This event has been cancelled.</span>
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Pivot Status (Status dari table event_volunteer) -->
                         <div class="mb-4">
@@ -159,10 +186,13 @@
                         </div>
 
                         <!-- Description -->
-                        <div class="mb-6">
-                            <p class="text-gray-600 text-sm line-clamp-3">
+                        <div class="mb-6" x-data="{ expanded: false }">
+                            <p class="text-gray-600 text-sm" :class="expanded ? '' : 'line-clamp-3'">
                                 {{ $event->description }}
                             </p>
+                            <button @click="expanded = !expanded" class="text-emerald-600 hover:text-emerald-700 text-xs font-medium mt-1 focus:outline-none" x-show="$el.previousElementSibling.scrollHeight > $el.previousElementSibling.clientHeight || expanded">
+                                <span x-text="expanded ? 'Show less' : 'Read more'"></span>
+                            </button>
                         </div>
 
                         <!-- Joined At Info -->
@@ -170,8 +200,8 @@
                             You joined on: {{ \Carbon\Carbon::parse($event->pivot->joined_at)->format('d M Y') }}
                         </div>
 
-                        <!-- Leave Button (only for upcoming confirmed events) -->
-                        @if($joinStatus == 'confirmed' && !$event->isPast())
+                        <!-- Leave Button (only for upcoming confirmed events, not for cancelled) -->
+                        @if($joinStatus == 'confirmed' && !$event->isPast() && $event->status != 'cancelled')
                             <div class="mt-4">
                                 <button type="button" 
                                     data-action="{{ route('volunteer.leave', $event->id) }}" 

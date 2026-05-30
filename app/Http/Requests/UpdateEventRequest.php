@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Event;
 use App\Rules\UniqueEventLocation;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class UpdateEventRequest extends FormRequest
@@ -30,7 +31,7 @@ class UpdateEventRequest extends FormRequest
             'required_hobbies' => 'nullable|string|max:500',
             'required_languages' => 'nullable|string|max:500',
             'health_requirement' => 'nullable|string|max:500',
-            'gamification_category' => 'required|in:religious,charity,education,community,youth,elderly,maintenance',
+            'gamification_category' => ['required', Rule::in(\App\Models\Event::CATEGORIES)],
         ];
     }
 

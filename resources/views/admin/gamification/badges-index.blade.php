@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
+        ['label' => 'Badges'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
@@ -76,7 +83,7 @@
                     <tbody class="divide-y divide-gray-200">
                         @forelse($badges as $badge)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4"><div class="flex items-center gap-3">@if($badge->icon_url)<img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" class="w-10 h-10 object-contain rounded-lg border border-gray-200">@elseif($badge->is_raw_svg)<span class="w-10 h-10 flex items-center justify-center text-2xl">{!! $badge->icon_svg !!}</span>@else<span class="w-10 h-10 flex items-center justify-center text-2xl">{{ $badge->fallback_emoji }}</span>@endif<code class="bg-gray-100 px-2 py-1 rounded font-mono text-sm">{{ $badge->code }}</code></div></td>
+                                <td class="px-6 py-4"><div class="flex items-center gap-3">@if($badge->icon_url)<img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" class="w-10 h-10 object-contain rounded-lg border border-gray-200">@elseif($badge->is_raw_svg)<span class="w-10 h-10 flex items-center justify-center text-2xl">@safe_svg($badge->icon_svg)</span>@else<span class="w-10 h-10 flex items-center justify-center text-2xl">{{ $badge->fallback_emoji }}</span>@endif<code class="bg-gray-100 px-2 py-1 rounded font-mono text-sm">{{ $badge->code }}</code></div></td>
                                 <td class="px-6 py-4"><p class="font-medium text-gray-900">{{ $badge->name }}</p><p class="text-sm text-gray-500">{{ $badge->name_my }}</p></td>
                                 <td class="px-6 py-4"><span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium capitalize @if($badge->tier === 'diamond') bg-purple-100 text-purple-700 @elseif($badge->tier === 'platinum') bg-gray-200 text-gray-700 @elseif($badge->tier === 'gold') bg-amber-100 text-amber-700 @elseif($badge->tier === 'silver') bg-slate-100 text-slate-700 @else bg-orange-100 text-orange-700 @endif">{{ ucfirst($badge->tier) }}</span></td>
                                 <td class="px-6 py-4"><span class="font-semibold text-emerald-600">+{{ number_format($badge->points_awarded) }}</span></td>
@@ -96,7 +103,7 @@
                     <div class="p-4 space-y-3">
                         <div class="flex items-center gap-3">
                             @if($badge->icon_url)<img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" class="w-10 h-10 object-contain rounded-lg border border-gray-200">
-                            @elseif($badge->is_raw_svg)<span class="w-10 h-10 flex items-center justify-center text-2xl">{!! $badge->icon_svg !!}</span>
+                            @elseif($badge->is_raw_svg)<span class="w-10 h-10 flex items-center justify-center text-2xl">@safe_svg($badge->icon_svg)</span>
                             @else<span class="w-10 h-10 flex items-center justify-center text-2xl">{{ $badge->fallback_emoji }}</span>@endif
                             <div class="flex-1 min-w-0"><p class="font-medium text-gray-900 text-sm truncate">{{ $badge->name }}</p><code class="text-xs text-gray-500">{{ $badge->code }}</code></div>
                             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium @if($badge->tier === 'diamond') bg-purple-100 text-purple-700 @elseif($badge->tier === 'platinum') bg-gray-200 text-gray-700 @elseif($badge->tier === 'gold') bg-amber-100 text-amber-700 @elseif($badge->tier === 'silver') bg-slate-100 text-slate-700 @else bg-orange-100 text-orange-700 @endif">{{ ucfirst($badge->tier) }}</span>

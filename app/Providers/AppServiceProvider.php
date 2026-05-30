@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Transports\ResendTransport;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +23,19 @@ class AppServiceProvider extends ServiceProvider
                 );
             });
         });
+
+        Blade::directive('safe_svg', function ($expression) {
+            return "<?php echo App\\Providers\\AppServiceProvider::safeSvg($expression); ?>";
+        });
+    }
+
+    public static function safeSvg($svg)
+    {
+        if (empty($svg)) return '';
+        $svg = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $svg);
+        $svg = preg_replace('/\s+on\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $svg);
+        $svg = preg_replace('/<foreignObject\b[^>]*>(.*?)<\/foreignObject>/is', '', $svg);
+        $svg = preg_replace('/<\/?(?:object|embed|iframe|frame|meta|link|style)[^>]*>/i', '', $svg);
+        return $svg;
     }
 }

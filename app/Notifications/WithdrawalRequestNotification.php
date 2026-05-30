@@ -43,9 +43,16 @@ class WithdrawalRequestNotification extends Notification
 
             case 'approved':
                 $title = 'Withdrawal Approved';
-                $message = 'Your withdrawal request of <strong>RM ' . number_format($this->withdrawalRequest->amount, 2) . '</strong> for <strong>' . e($this->withdrawalRequest->purpose) . '</strong> has been <span class="text-green-600 font-semibold">APPROVED</span> by ' . $this->withdrawalRequest->approver->name . '.';
+                $message = 'Your withdrawal request of <strong>RM ' . number_format($this->withdrawalRequest->amount, 2) . '</strong> for <strong>' . e($this->withdrawalRequest->purpose) . '</strong> has been <span class="text-green-600 font-semibold">APPROVED</span> by ' . ($this->withdrawalRequest->approver->name ?? 'a treasurer') . '.';
                 $icon = 'fa-check-circle';
                 $iconColor = 'text-green-500';
+                break;
+
+            case 'maker_checked':
+                $title = 'Withdrawal Needs Second Approval';
+                $message = 'A withdrawal request of <strong>RM ' . number_format($this->withdrawalRequest->amount, 2) . '</strong> for <strong>' . e($this->withdrawalRequest->purpose) . '</strong> has been checked by ' . ($this->withdrawalRequest->makerChecker->name ?? 'a treasurer') . ' and needs a second treasurer to approve.';
+                $icon = 'fa-user-check';
+                $iconColor = 'text-orange-500';
                 break;
 
             case 'rejected':

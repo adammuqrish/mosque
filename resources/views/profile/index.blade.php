@@ -4,6 +4,12 @@
 
 @section('title', __('islamic.navigation.profile'))
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.profile')],
+    ];
+@endphp
+
 @section('content')
 
 <div class="max-w-4xl mx-auto space-y-6">
@@ -97,7 +103,7 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2">Age <span class="text-gray-400 font-normal">(Optional)</span></label>
                         <input type="number" name="age" value="{{ old('age', $user->age ?? '') }}" 
                             class="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition @error('age') border-red-500 ring-2 ring-red-200 @enderror" 
-                            placeholder="e.g. 25">
+                            placeholder="e.g. 25" min="1" max="150">
                         @error('age')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -157,131 +163,10 @@
                 <!-- Core Matching Criteria Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:p-6 mb-8 border-b border-gray-100 pb-6">
                     
-                    <!-- SKILLS MANAGER -->
-                    <div x-data="tagManager({{ json_encode(is_array($profile->skills ?? null) ? $profile->skills : (json_decode($profile->skills ?? '[]') ?? [])) }}, 'skills')">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Skills <span class="text-red-500">*</span></label>
-                        
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <!-- Tag Container -->
-                            <div class="flex flex-wrap gap-2 mb-3">
-                                <template x-for="(tag, index) in tags" :key="index">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 transition">
-                                        <span x-text="tag"></span>
-                                        <button type="button" @click="removeTag(index)" class="ml-1.5 focus:outline-none text-blue-600 hover:text-blue-900 transition font-bold text-lg leading-none">&times;</button>
-                                        <input type="hidden" :name="inputName + '[]'" :value="tag">
-                                    </span>
-                                </template>
-                                <span x-show="tags.length === 0" class="text-sm text-gray-400 italic py-1">No tags added yet.</span>
-                            </div>
-
-                            <!-- Input Area -->
-                            <div class="relative">
-                                <input type="text" x-model="newTag" 
-                                    @keydown.enter.prevent="addTag()" 
-                                    @keydown.comma.prevent="addTag()" 
-                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition block text-sm" 
-                                    placeholder="Type and press Enter/Comma to add"
-                                    :class="duplicateError ? 'border-red-400 focus:ring-red-500 bg-red-50' : 'border-gray-300'">
-                                <p x-show="duplicateError" x-transition class="absolute -bottom-5 text-xs text-red-500 font-medium">This tag already exists!</p>
-                            </div>
-                        </div>
-                        @error('skills')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                        @error('skills.*')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- HOBBIES MANAGER -->
-                    <div x-data="tagManager({{ json_encode(is_array($profile->hobbies ?? null) ? $profile->hobbies : (json_decode($profile->hobbies ?? '[]') ?? [])) }}, 'hobbies')">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Hobbies <span class="text-gray-400 font-normal">(Optional)</span></label>
-                        
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <!-- Tag Container -->
-                            <div class="flex flex-wrap gap-2 mb-3">
-                                <template x-for="(tag, index) in tags" :key="index">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200 transition">
-                                        <span x-text="tag"></span>
-                                        <button type="button" @click="removeTag(index)" class="ml-1.5 focus:outline-none text-emerald-600 hover:text-emerald-900 transition font-bold text-lg leading-none">&times;</button>
-                                        <input type="hidden" :name="inputName + '[]'" :value="tag">
-                                    </span>
-                                </template>
-                                <span x-show="tags.length === 0" class="text-sm text-gray-400 italic py-1">No tags added yet.</span>
-                            </div>
-
-                            <!-- Input Area -->
-                            <div class="relative">
-                                <input type="text" x-model="newTag" 
-                                    @keydown.enter.prevent="addTag()" 
-                                    @keydown.comma.prevent="addTag()" 
-                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition block text-sm" 
-                                    placeholder="Type and press Enter/Comma to add"
-                                    :class="duplicateError ? 'border-red-400 focus:ring-red-500 bg-red-50' : 'border-gray-300'">
-                                <p x-show="duplicateError" x-transition class="absolute -bottom-5 text-xs text-red-500 font-medium">This tag already exists!</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- INTERESTS MANAGER -->
-                    <div x-data="tagManager({{ json_encode(is_array($profile->interests ?? null) ? $profile->interests : (json_decode($profile->interests ?? '[]') ?? [])) }}, 'interests')">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Interests <span class="text-gray-400 font-normal">(Optional)</span></label>
-                        
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <!-- Tag Container -->
-                            <div class="flex flex-wrap gap-2 mb-3">
-                                <template x-for="(tag, index) in tags" :key="index">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200 transition">
-                                        <span x-text="tag"></span>
-                                        <button type="button" @click="removeTag(index)" class="ml-1.5 focus:outline-none text-purple-600 hover:text-purple-900 transition font-bold text-lg leading-none">&times;</button>
-                                        <input type="hidden" :name="inputName + '[]'" :value="tag">
-                                    </span>
-                                </template>
-                                <span x-show="tags.length === 0" class="text-sm text-gray-400 italic py-1">No tags added yet.</span>
-                            </div>
-
-                            <!-- Input Area -->
-                            <div class="relative">
-                                <input type="text" x-model="newTag" 
-                                    @keydown.enter.prevent="addTag()" 
-                                    @keydown.comma.prevent="addTag()" 
-                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none transition block text-sm" 
-                                    placeholder="Type and press Enter/Comma to add"
-                                    :class="duplicateError ? 'border-red-400 focus:ring-red-500 bg-red-50' : 'border-gray-300'">
-                                <p x-show="duplicateError" x-transition class="absolute -bottom-5 text-xs text-red-500 font-medium">This tag already exists!</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- LANGUAGES MANAGER -->
-                    <div x-data="tagManager({{ json_encode(is_array($profile->languages ?? null) ? $profile->languages : (json_decode($profile->languages ?? '[]') ?? [])) }}, 'languages')">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Languages <span class="text-gray-400 font-normal">(Optional)</span></label>
-                        
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <!-- Tag Container -->
-                            <div class="flex flex-wrap gap-2 mb-3">
-                                <template x-for="(tag, index) in tags" :key="index">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 transition">
-                                        <span x-text="tag"></span>
-                                        <button type="button" @click="removeTag(index)" class="ml-1.5 focus:outline-none text-yellow-600 hover:text-yellow-900 transition font-bold text-lg leading-none">&times;</button>
-                                        <input type="hidden" :name="inputName + '[]'" :value="tag">
-                                    </span>
-                                </template>
-                                <span x-show="tags.length === 0" class="text-sm text-gray-400 italic py-1">No tags added yet.</span>
-                            </div>
-
-                            <!-- Input Area -->
-                            <div class="relative">
-                                <input type="text" x-model="newTag" 
-                                    @keydown.enter.prevent="addTag()" 
-                                    @keydown.comma.prevent="addTag()" 
-                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-yellow-500 focus:outline-none transition block text-sm" 
-                                    placeholder="Type and press Enter/Comma to add"
-                                    :class="duplicateError ? 'border-red-400 focus:ring-red-500 bg-red-50' : 'border-gray-300'">
-                                <p x-show="duplicateError" x-transition class="absolute -bottom-5 text-xs text-red-500 font-medium">This tag already exists!</p>
-                            </div>
-                        </div>
-                    </div>
+                    @include('profile.partials._tag_manager', ['name' => 'skills', 'label' => 'Skills', 'required' => true, 'color' => 'blue', 'hint' => 'Your skills help match you to suitable volunteering events and tasks.'])
+                    @include('profile.partials._tag_manager', ['name' => 'hobbies', 'label' => 'Hobbies', 'required' => false, 'color' => 'emerald'])
+                    @include('profile.partials._tag_manager', ['name' => 'interests', 'label' => 'Interests', 'required' => false, 'color' => 'purple'])
+                    @include('profile.partials._tag_manager', ['name' => 'languages', 'label' => 'Languages', 'required' => false, 'color' => 'yellow'])
 
                 </div>
 
@@ -293,13 +178,13 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2">General Availability</label>
                         <div class="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
                             <div class="flex items-center">
-                                <input type="checkbox" name="availability[weekend]" value="true" 
+                                <input type="checkbox" name="availability[weekend]" value="weekend" 
                                 @if($profile && is_array($profile->availability) && in_array('weekend', $profile->availability)) checked @endif
                                 class="mr-2 h-5 w-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500">
                                 <label class="text-gray-700 text-sm">Weekend</label>
                             </div>
                             <div class="flex items-center">
-                                <input type="checkbox" name="availability[weekday]" value="true" 
+                                <input type="checkbox" name="availability[weekday]" value="weekday" 
                                 @if($profile && is_array($profile->availability) && in_array('weekday', $profile->availability)) checked @endif
                                 class="mr-2 h-5 w-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500">
                                 <label class="text-gray-700 text-sm">Weekday</label>
@@ -347,11 +232,11 @@
 
                 <!-- BUTTON -->
                 <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" onclick="autoFillProfile()" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 sm:px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2">
+                    <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillProfile()" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 sm:px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
-                        Auto Fill
+                        Auto Fill (Demo)
                     </button>
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-200 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -539,6 +424,30 @@
                             </template>
                         </div>
                     </div>
+
+                    <!-- Inline Confirmation -->
+                    <div x-show="confirmRegenerate" x-transition.opacity.duration.200ms
+                         class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mt-4">
+                        <p class="text-sm text-yellow-800 font-medium mb-3">Generate a new code? Your existing referrals will still work, but new users will need the new code.</p>
+                        <div class="flex gap-3">
+                            <button @click="confirmedRegenerate()" :disabled="loading"
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition disabled:opacity-50">
+                                <span x-show="!loading">Generate</span>
+                                <span x-show="loading" class="flex items-center justify-center gap-2">
+                                    <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Generating...
+                                </span>
+                            </button>
+                            <button @click="cancelRegenerate()"
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="bg-green-50 border border-green-200 rounded-xl p-4 mt-4">
                         <p class="text-sm text-green-800"><strong>How it works:</strong> Share this code with friends. When they register using your code, you get <strong>15 points</strong> instantly!</p>
                     </div>
@@ -555,6 +464,7 @@
             copying: false,
             loading: false,
             canRegenerate: initialCanRegenerate,
+            confirmRegenerate: false,
             
             /**
              * Generate or regenerate referral code via AJAX POST request.
@@ -620,7 +530,14 @@
              * Old referrals still work, but new ones need the new code.
              */
             regenerateCode() {
-                showConfirmDialog('Generate New Referral Code', 'Generate a new code? Your existing referrals will still work, but new users will need the new code.', 'Generate', 'bg-blue-600 hover:bg-blue-700', () => this.generateCode());
+                this.confirmRegenerate = true;
+            },
+            cancelRegenerate() {
+                this.confirmRegenerate = false;
+            },
+            confirmedRegenerate() {
+                this.confirmRegenerate = false;
+                this.generateCode();
             }
         }));
     });

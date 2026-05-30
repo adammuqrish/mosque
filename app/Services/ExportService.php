@@ -47,7 +47,7 @@ class ExportService
                     'Donor IC' => $donation->donor_ic ?? '-',
                     'Source' => ucfirst($donation->source ?? 'N/A'),
                     'Status' => ucfirst($donation->status ?? 'pending'),
-                    'Reference' => $donation->reference ?? '-',
+                    'Receipt #' => $donation->receipt_number ?? '-',
                     'Description' => $donation->description ?? '-',
                     'Recorded At' => $donation->created_at ? $donation->created_at->format('Y-m-d H:i') : '-',
                 ];
@@ -70,7 +70,7 @@ class ExportService
                 'Donor IC' => $donation->donor_ic ?? '-',
                 'Source' => ucfirst($donation->source ?? 'N/A'),
                 'Status' => ucfirst($donation->status ?? 'pending'),
-                'Reference' => $donation->reference ?? '-',
+                'Receipt #' => $donation->receipt_number ?? '-',
                 'Description' => $donation->description ?? '-',
                 'Recorded At' => $donation->created_at ? $donation->created_at->format('Y-m-d H:i') : '-',
             ];
@@ -79,7 +79,7 @@ class ExportService
 
 public function generateEventsReport(string $format = 'csv', ?int $month = null, ?int $year = null, string $reportType = 'monthly')
     {
-        $query = Event::query();
+        $query = Event::withCount('volunteers');
 
         if ($reportType === 'monthly' && $month) {
             $query->whereMonth('event_date', $month);
@@ -660,14 +660,27 @@ public function generateEventsReport(string $format = 'csv', ?int $month = null,
 
     private function generateHTMLForPDF($data, string $title, ?string $period = null)
     {
+        $colCount = $data->isNotEmpty() ? count($data->first()) : 0;
+        $isWide = $colCount > 8;
+
         $rows = '';
         foreach ($data as $row) {
             $rows .= '<tr>';
             foreach ($row as $cell) {
-                $rows .= '<td style="border:1px solid #ddd;padding:8px;">' . $cell . '</td>';
+                $rows .= '<td style="border:1px solid #d1d5db;padding:2px 4px;font-size:7px;word-break:break-word;overflow-wrap:break-word;">' . $cell . '</td>';
             }
             $rows .= '</tr>';
         }
+
+        $headers = '';
+        if ($data->isNotEmpty()) {
+            $headers = collect($data->first())->keys()->map(function($key) {
+                return '<th style="background-color:#065f46;color:#fff;padding:3px 4px;text-align:left;font-size:6px;text-transform:uppercase;letter-spacing:0.2px;word-break:break-word;overflow-wrap:break-word;">' . $key . '</th>';
+            })->implode('');
+        }
+
+        $pageSize = $isWide ? 'A4 landscape' : 'A4 portrait';
+        $margin = $isWide ? '15mm 10mm 20mm 10mm' : '30mm 20mm 25mm 20mm';
 
         return '
         <!DOCTYPE html>
@@ -675,32 +688,39 @@ public function generateEventsReport(string $format = 'csv', ?int $month = null,
         <head>
             <meta charset="utf-8">
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                h1 { color: #333; border-bottom: 2px solid #2563eb; padding-bottom: 10px; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th { background-color: #2563eb; color: white; padding: 12px; text-align: left; }
-                tr:nth-child(even) { background-color: #f8f9fa; }
-                .footer { margin-top: 30px; font-size: 12px; color: #666; }
+                @page { margin: ' . $margin . '; size: ' . $pageSize . '; }
+                body { font-family: "DejaVu Sans", "Amiri", Arial, sans-serif; color: #374151; font-size: 10px; line-height: 1.6; }
+                .header { text-align: center; margin-bottom: 6mm; padding-bottom: 3mm; border-bottom: 2px solid #065f46; }
+                .header .bismillah { font-family: "Amiri", "DejaVu Sans", serif; font-size: 18px; color: #065f46; direction: rtl; margin-bottom: 2px; }
+                .header .mosque-name { font-size: 16px; font-weight: bold; color: #065f46; }
+                .report-title { text-align: center; margin: 4mm 0 3mm; }
+                .report-title h1 { color: #065f46; font-size: 14px; font-weight: bold; margin: 0 0 3px; }
+                .report-title .meta { font-size: 9px; color: #6b7280; }
+                table { width: 100%; max-width: 100%; border-collapse: collapse; margin-top: 3mm; table-layout: fixed; }
+                th, td { border: 1px solid #d1d5db; word-break: break-word; overflow-wrap: break-word; }
+                tr:nth-child(even) { background-color: #f9fafb; }
+                .footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 7px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 3mm; }
+                .footer .brand { color: #065f46; font-weight: 600; }
             </style>
         </head>
         <body>
-            <h1>' . $title . '</h1>
-            <p>Generated on: ' . date('Y-m-d H:i:s') . '</p>' .
-            ($period ? '<p>Report Period: ' . $period . '</p>' : '') .
-            '<table>
-                <thead>
-                    <tr>
-                        ' . collect($data->first())->keys()->map(function($key) {
-                            return '<th>' . $key . '</th>';
-                        })->implode('') . '
-                    </tr>
-                </thead>
-                <tbody>
-                    ' . $rows . '
-                </tbody>
+            <div class="header">
+                <div class="bismillah">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+                <div class="mosque-name">Smart Mosque System</div>
+            </div>
+            <div class="report-title">
+                <h1>' . $title . '</h1>
+                <div class="meta">' .
+                ($period ? 'Period: ' . $period . ' &bull; ' : '') .
+                'Generated: ' . date('Y-m-d H:i:s') . '</div>
+            </div>
+            <table>
+                <thead><tr>' . $headers . '</tr></thead>
+                <tbody>' . $rows . '</tbody>
             </table>
             <div class="footer">
-                <p>Mosque Management System - Report generated automatically</p>
+                <span class="brand">Smart Mosque System</span>
+                &mdash; Laporan ini dijana secara automatik &bull; Automatically generated report
             </div>
         </body>
         </html>';

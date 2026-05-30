@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
+        ['label' => 'Badges', 'url' => route('admin.gamification.badges.index')],
+        ['label' => isset($badge) ? 'Edit Badge' : 'New Badge'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,7 +157,7 @@
                                         @if($badge->icon_url)
                                             <img src="{{ $badge->icon_url }}" alt="{{ $badge->name }}" class="w-12 h-12 object-contain rounded-lg border border-amber-300 shadow-sm">
                                         @elseif($badge->is_raw_svg)
-                                            <span class="w-12 h-12 flex items-center justify-center text-3xl">{!! $badge->icon_svg !!}</span>
+                                            <span class="w-12 h-12 flex items-center justify-center text-3xl">@safe_svg($badge->icon_svg)</span>
                                         @endif
                                     </div>
                                     <span class="px-2 py-1 text-xs font-medium bg-amber-200 text-amber-800 rounded-full">Active</span>
@@ -222,12 +230,12 @@
 
 {{-- Submit --}}
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-8 pt-6 border-t border-gray-200">
-                    <button type="button" onclick="autoFillBadge()"
+                    <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillBadge()"
                             class="w-full sm:w-auto px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white font-bold rounded-lg transition flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
-                        Auto Fill
+                        Auto Fill (Demo)
                     </button>
                     <div class="flex flex-col-reverse sm:flex-row gap-3">
                         <a href="{{ route('admin.gamification.badges.index') }}"

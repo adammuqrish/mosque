@@ -11,6 +11,7 @@ class ZakatAkad extends Model
 
     protected $fillable = [
         'donation_id',
+        'reference',
         'muzakki_name',
         'muzakki_ic',
         'amil_name',
@@ -57,7 +58,7 @@ class ZakatAkad extends Model
 
     public function getAkadReferenceAttribute(): string
     {
-        return 'ZKT-' . $this->akad_date->format('Ymd') . '-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
+        return $this->reference ?? 'ZKT-' . $this->akad_date->format('Ymd') . '-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
     }
 
     public function getAmilDisplayAttribute(): string

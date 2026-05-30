@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class ValidateTestData extends Command
 {
-    protected $signature = 'mosque:validate-data {--verbose : Show detailed output}';
+    protected $signature = 'mosque:validate-data';
     protected $description = 'Validate test data integrity after seeding';
 
     public function handle()

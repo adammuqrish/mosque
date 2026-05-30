@@ -24,7 +24,11 @@ class RegisterRequest extends FormRequest
                 Rule::unique('users', 'email'),
             ],
             'password' => 'required|string|min:8|max:50|confirmed',
-            'phone' => 'required|digits_between:9,15',
+            'phone' => [
+                'required',
+                'regex:/^01[0-9]{8,9}$/',
+                Rule::unique('users', 'phone'),
+            ],
             'special_code' => 'nullable|string|max:50',
             // STEP 2: Referral code validation - must be uppercase letters/numbers, max 8 chars
             'referral_code' => ['nullable', 'string', 'max:8', 'regex:/^[A-Z0-9]{0,8}$/'],
@@ -37,7 +41,8 @@ class RegisterRequest extends FormRequest
     {
         return [
             'email.unique' => 'This email address is already registered.',
-            'phone.digits_between' => 'Phone number must be between 9 to 15 digits.',
+            'phone.regex' => 'Phone must be a valid Malaysian number starting with 01 (e.g. 012-3456789).',
+            'phone.unique' => 'This phone number is already registered.',
             'password.min' => 'Password must be at least 8 characters.',
             // STEP 4: Custom message for invalid referral code format
             'referral_code.regex' => 'Referral code must be uppercase letters and numbers only (e.g., A3F9B2C1).',

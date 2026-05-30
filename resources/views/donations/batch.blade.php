@@ -4,6 +4,13 @@
 
 @section('title', 'Batch Donation Entry')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.donations.nav_label'), 'url' => route('donations.index')],
+        ['label' => 'Batch Entry'],
+    ];
+@endphp
+
 @section('content')
 
     <div class="mb-6">
@@ -51,7 +58,7 @@
                         <tr class="donation-row" data-row="0">
                             <td class="px-3 py-2 text-xs text-gray-400 row-number">1</td>
                             <td class="px-3 py-2">
-                                <input type="number" step="0.01" name="donations[0][amount]"
+                                <input type="number" step="0.01" min="0.01" name="donations[0][amount]"
                                     class="w-full border rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                                     placeholder="0.00" required>
                             </td>
@@ -112,7 +119,7 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Amount (RM)</label>
-                            <input type="number" step="0.01" name="donations[0][amount]"
+                            <input type="number" step="0.01" min="0.01" name="donations[0][amount]"
                                 class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                                 placeholder="0.00" required>
                         </div>

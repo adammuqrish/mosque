@@ -20,13 +20,16 @@ class WithdrawalRequestPolicy
         return $user->role === 'admin';
     }
 
-    public function approve(User $user): bool
+    public function approve(User $user, WithdrawalRequest $withdrawalRequest): bool
     {
-        return $user->role === 'treasurer';
+        if ($user->role !== 'treasurer') return false;
+        if ($withdrawalRequest->requested_by === $user->id) return false;
+        if ($withdrawalRequest->status === 'maker_checked' && $withdrawalRequest->maker_checked_by === $user->id) return false;
+        return true;
     }
 
-    public function reject(User $user): bool
+    public function reject(User $user, WithdrawalRequest $withdrawalRequest): bool
     {
-        return $user->role === 'treasurer';
+        return $user->role === 'treasurer' && $withdrawalRequest->requested_by !== $user->id;
     }
 }

@@ -2,6 +2,13 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('gamification.dashboard')],
+        ['label' => 'Leaderboard'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,7 +36,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div x-show="open" class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10" style="display: none;">
-                    @php $categories = ['education', 'community', 'religious', 'charity', 'maintenance', 'youth', 'elderly']; @endphp
+                    @php $categories = \App\Models\Event::CATEGORIES; @endphp
                     @foreach($categories as $cat)
                         <a href="{{ route('gamification.leaderboard', ['type' => 'category', 'category' => $cat]) }}"
                            class="block px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg {{ $type === 'category' && $category === $cat ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700' }}">
@@ -83,7 +90,7 @@
                     {{-- Avatar --}}
                     <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-xl">
                         @if(isset($entry['tier_icon']) && $entry['tier_icon'])
-                            {!! $entry['tier_icon'] !!}
+                            @safe_svg($entry['tier_icon'])
                         @else
                             👤
                         @endif

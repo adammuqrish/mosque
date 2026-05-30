@@ -2,6 +2,13 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('gamification.dashboard')],
+        ['label' => 'Points History'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-slate-50 py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,6 +50,18 @@
                     {{-- Details --}}
                     <div class="flex-1">
                         <p class="font-medium text-gray-900">{{ $transaction->reason }}</p>
+                        @if($transaction->breakdown)
+                            <p class="text-xs text-gray-400 mt-0.5">
+                                @php
+                                    $parts = [];
+                                    if (isset($transaction->breakdown['base'])) $parts[] = $transaction->breakdown['base'] . ' base';
+                                    if (isset($transaction->breakdown['early_join'])) $parts[] = $transaction->breakdown['early_join'] . ' early join';
+                                    if (isset($transaction->breakdown['streak_bonus'])) $parts[] = $transaction->breakdown['streak_bonus'] . ' streak';
+                                    if (isset($transaction->breakdown['category_bonus'])) $parts[] = $transaction->breakdown['category_bonus'] . ' category';
+                                @endphp
+                                {{ implode(' + ', $parts) }}
+                            </p>
+                        @endif
                         <p class="text-sm text-gray-500">
                             {{ $transaction->created_at->format('d M Y, H:i') }}
                             @if($transaction->admin_id)

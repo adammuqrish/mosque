@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\ZakatAkad;
 use App\Http\Requests\DonationRequest;
 use App\Http\Requests\BatchDonationRequest;
+use App\Http\Requests\BulkDonationRequest;
+use App\Notifications\DonationNotification;
+use App\Services\ReceiptNumberService;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
@@ -42,7 +45,7 @@ class DonationController extends Controller
 
         $cashCount = Donation::where('source', 'cash')->count();
         $onlineCount = Donation::where('source', 'online')->count();
-        $pendingCount = Donation::pending()->count();
+        $donationPendingCount = Donation::pending()->count();
         $pendingTotal = Donation::pending()->sum('amount');
         $confirmedTotal = Donation::confirmed()->sum('amount');
         $disputedTotal = Donation::disputed()->sum('amount');
@@ -59,18 +62,18 @@ class DonationController extends Controller
             ->pluck('total', 'fund_purpose');
 
         $suggestedPurposes = Donation::getSuggestedPurposes();
-        $amilUsers = User::whereIn('role', ['admin', 'treasurer', 'member'])->orderBy('name')->get(['id', 'name']);
+        $amilUsers = User::amils()->orderBy('name')->get(['id', 'name']);
 
         return view('donations.index', compact(
             'donations', 'sort', 'direction', 'typeFilter', 'statusFilter',
-            'cashCount', 'onlineCount', 'pendingCount', 'pendingTotal',
+            'cashCount', 'onlineCount', 'donationPendingCount', 'pendingTotal',
             'confirmedTotal', 'disputedTotal',
             'zakatTotal', 'zakatFitrTotal', 'sadaqahTotal', 'waqfTotal',
             'fundPurposeBreakdown', 'suggestedPurposes', 'amilUsers'
         ));
     }
 
-    public function store(DonationRequest $request)
+    public function store(DonationRequest $request, ReceiptNumberService $receiptService)
     {
         $validated = $request->validated();
 
@@ -84,6 +87,7 @@ class DonationController extends Controller
             'status' => $validated['status'] ?? 'pending',
             'reference' => $validated['reference'] ?? null,
             'donation_date' => $validated['donation_date'],
+            'receipt_number' => $receiptService->nextDonationReceiptNumber(),
             'description' => $validated['description'] ?? null,
             'donor_name' => $validated['donor_name'] ?? null,
             'donor_ic' => $validated['donor_ic'] ?? null,
@@ -95,6 +99,7 @@ class DonationController extends Controller
         if (in_array($donation->category, ['zakat', 'zakat_fitr']) && $validated['amil_name']) {
             ZakatAkad::create([
                 'donation_id' => $donation->id,
+                'reference' => $receiptService->nextAkadReference(),
                 'muzakki_name' => $validated['donor_name'] ?? $donation->donor_display_name,
                 'muzakki_ic' => $validated['donor_ic'] ?? null,
                 'amil_name' => $validated['amil_name'],
@@ -103,6 +108,11 @@ class DonationController extends Controller
                 'amount' => $validated['amount'],
                 'notes' => $validated['akad_notes'] ?? null,
             ]);
+        }
+
+        $treasurers = User::where('role', 'treasurer')->get();
+        foreach ($treasurers as $treasurer) {
+            $treasurer->notify(new DonationNotification($donation, 'created'));
         }
 
         return redirect()->back()->with('success', __('islamic.flash_messages.recorded'));
@@ -116,11 +126,19 @@ class DonationController extends Controller
             return redirect()->back()->with('error', 'Only pending donations can be confirmed.');
         }
 
+        if ($donation->user_id === auth()->id()) {
+            return redirect()->back()->with('error', 'Anda tidak boleh mengesahkan sumbangan sendiri.');
+        }
+
         $donation->update([
             'status' => 'confirmed',
             'verified_by' => auth()->id(),
             'verified_at' => now(),
         ]);
+
+        if ($donation->user) {
+            $donation->user->notify(new DonationNotification($donation, 'confirmed'));
+        }
 
         return redirect()->back()->with('success', 'Donation confirmed successfully.');
     }
@@ -133,11 +151,19 @@ class DonationController extends Controller
             return redirect()->back()->with('error', 'Only pending donations can be disputed.');
         }
 
+        if ($donation->user_id === auth()->id()) {
+            return redirect()->back()->with('error', 'Anda tidak boleh mempertikaikan sumbangan sendiri.');
+        }
+
         $donation->update([
             'status' => 'disputed',
             'verified_by' => auth()->id(),
             'verified_at' => now(),
         ]);
+
+        if ($donation->user) {
+            $donation->user->notify(new DonationNotification($donation, 'disputed'));
+        }
 
         return redirect()->back()->with('success', 'Donation marked as disputed.');
     }
@@ -148,7 +174,7 @@ class DonationController extends Controller
         return view('donations.batch', compact('suggestedPurposes'));
     }
 
-    public function batchStore(BatchDonationRequest $request)
+    public function batchStore(BatchDonationRequest $request, ReceiptNumberService $receiptService)
     {
         $validated = $request->validated();
         $count = 0;
@@ -163,6 +189,7 @@ class DonationController extends Controller
                 'source' => $data['source'],
                 'status' => 'pending',
                 'donation_date' => $data['donation_date'],
+                'receipt_number' => $receiptService->nextDonationReceiptNumber(),
                 'donor_name' => $data['donor_name'] ?? null,
                 'description' => 'Batch entry',
             ]);
@@ -171,6 +198,41 @@ class DonationController extends Controller
 
         return redirect()->route('donations.batch.form')
             ->with('success', $count . ' donation(s) recorded successfully.');
+    }
+
+    public function bulkForm()
+    {
+        $suggestedPurposes = Donation::getSuggestedPurposes();
+        return view('donations.bulk', compact('suggestedPurposes'));
+    }
+
+    public function bulkStore(BulkDonationRequest $request, ReceiptNumberService $receiptService)
+    {
+        $validated = $request->validated();
+
+        $notes = 'Kutipan Pukal';
+        if ($validated['witnesses']) {
+            $notes .= ' — Saksi: ' . $validated['witnesses'];
+        }
+        if ($validated['description']) {
+            $notes .= ' (' . $validated['description'] . ')';
+        }
+
+        $donation = Donation::create([
+            'user_id' => auth()->id(),
+            'amount' => $validated['amount'],
+            'category' => 'sadaqah',
+            'type' => 'voluntary',
+            'fund_purpose' => $validated['fund_purpose'],
+            'source' => 'cash',
+            'status' => 'confirmed',
+            'donation_date' => $validated['donation_date'],
+            'receipt_number' => $receiptService->nextDonationReceiptNumber(),
+            'description' => $notes,
+        ]);
+
+        return redirect()->route('donations.bulk.form')
+            ->with('success', 'Bulk sadaqah entry recorded. Receipt #: ' . $donation->receipt_number . ' — RM ' . number_format($donation->amount, 2));
     }
 
     public function printAkad($id)
@@ -187,6 +249,18 @@ class DonationController extends Controller
         $pdf->setPaper('A4', 'portrait');
 
         $filename = 'akad_' . $akad->akad_reference . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function printReceipt($id)
+    {
+        $donation = Donation::findOrFail($id);
+
+        $pdf = PDF::loadView('donations.receipt-pdf', compact('donation'));
+        $pdf->setPaper('A4', 'portrait');
+
+        $filename = 'receipt_' . $donation->receipt_number . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -215,6 +289,13 @@ class DonationController extends Controller
     {
         $fundPurpose->delete();
         return redirect()->route('donations.fund-purposes')->with('success', 'Fund purpose deleted.');
+    }
+
+    public function fundPurposeToggleActive(FundPurpose $fundPurpose)
+    {
+        $fundPurpose->update(['is_active' => !$fundPurpose->is_active]);
+        $status = $fundPurpose->is_active ? 'activated' : 'deactivated';
+        return redirect()->route('donations.fund-purposes')->with('success', "Fund purpose '{$fundPurpose->name}' {$status}.");
     }
 
     private function getDonationType(string $category): string

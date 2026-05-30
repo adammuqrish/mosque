@@ -2,6 +2,13 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
+        ['label' => 'Tiers'],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,7 +62,7 @@
                     ">
                         <div class="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
                             @if($tier->icon_svg)
-                                <span class="w-full h-full flex items-center justify-center">{!! $tier->icon_svg !!}</span>
+                                <span class="w-full h-full flex items-center justify-center">@safe_svg($tier->icon_svg)</span>
                             @else
                                 <span class="text-4xl">
                                     @if($tier->tier === 'diamond') 👑
@@ -93,7 +100,7 @@
                                class="flex-1 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium text-center hover:bg-blue-200 transition">
                                 Edit
                             </a>
-                            <button type="button" onclick="showConfirmModal('Delete Tier', 'Delete this tier? Members at this level may lose tier display.', 'Delete', 'bg-red-600 hover:bg-red-700', '{{ route('admin.gamification.tiers.destroy', $tier) }}', 'DELETE')" class="flex-1 w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition">
+                            <button type="button" onclick="showConfirmModal('Delete Tier', 'Delete this tier? Members at this level will be moved to the next available tier. Their points and badges will be preserved, but tier-specific perks and display will be lost.', 'Delete', 'bg-red-600 hover:bg-red-700', '{{ route('admin.gamification.tiers.destroy', $tier) }}', 'DELETE')" class="flex-1 w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition">
                                 Delete
                             </button>
                         </div>

@@ -2,6 +2,12 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification')],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-[#FAFAF5] via-white to-[#D4EDDA]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -35,7 +41,7 @@
                             </svg>
                             <div class="absolute inset-0 flex items-center justify-center">
                                 @if($stats['tier_icon'])
-                                    <span>{!! $stats['tier_icon'] !!}</span>
+                                    <span>@safe_svg($stats['tier_icon'])</span>
                                 @else
                                     <span class="text-2xl">🌱</span>
                                 @endif
@@ -110,7 +116,7 @@
                                     @if($item['badge']->icon_url)
                                         <img src="{{ $item['badge']->icon_url }}" alt="{{ $item['badge']->name }}" class="w-8 h-8 object-contain">
                                     @elseif($item['badge']->is_raw_svg)
-                                        {!! $item['badge']->icon_svg !!}
+                                        @safe_svg($item['badge']->icon_svg)
                                     @else
                                         {{ $item['badge']->fallback_emoji }}
                                     @endif
@@ -224,7 +230,7 @@
                         </div>
                         <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-lg">
                             @if(isset($entry['tier_icon']) && $entry['tier_icon'])
-                                {!! $entry['tier_icon'] !!}
+                                @safe_svg($entry['tier_icon'])
                             @else
                                 👤
                             @endif

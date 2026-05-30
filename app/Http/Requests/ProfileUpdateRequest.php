@@ -16,7 +16,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             // STEP 1: Validate personal info fields
             'name' => 'required|string|max:255',
-            'phone' => 'required|digits_between:9,15',
+            'phone' => ['required', 'regex:/^01[0-9]{8,9}$/'],
             'age' => 'nullable|integer|min:1|max:150',
             'address' => 'nullable|string|max:500',
         ];
@@ -27,7 +27,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name.required' => 'Name is required.',
             'name.max' => 'Name cannot exceed 255 characters.',
-            'phone.digits_between' => 'Phone number must be between 9 to 15 digits.',
+            'phone.regex' => 'Phone must be a valid Malaysian number starting with 01 (e.g. 012-3456789).',
             'age.min' => 'Age must be at least 1.',
             'age.max' => 'Age cannot exceed 150.',
             'address.max' => 'Address cannot exceed 500 characters.',

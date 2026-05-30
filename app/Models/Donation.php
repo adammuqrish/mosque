@@ -12,6 +12,7 @@ class Donation extends Model
     protected $fillable = [
         'user_id', 'amount', 'category', 'type', 'fund_purpose', 'asnaf_category',
         'source', 'status', 'reference', 'description', 'donation_date',
+        'receipt_number',
         'verified_by', 'verified_at',
         'donor_name', 'donor_ic', 'donor_phone', 'donor_email', 'donor_address',
     ];
@@ -37,6 +38,46 @@ class Donation extends Model
     public function setDonorIcAttribute($value)
     {
         $this->attributes['donor_ic'] = $value !== null
+            ? \Illuminate\Support\Facades\Crypt::encrypt($value)
+            : null;
+    }
+
+    public function getDonorPhoneAttribute($value)
+    {
+        if ($value === null) return null;
+        if (substr($value, 0, 3) === 'eyJ') {
+            try {
+                return \Illuminate\Support\Facades\Crypt::decrypt($value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+        return $value;
+    }
+
+    public function setDonorPhoneAttribute($value)
+    {
+        $this->attributes['donor_phone'] = $value !== null
+            ? \Illuminate\Support\Facades\Crypt::encrypt($value)
+            : null;
+    }
+
+    public function getDonorAddressAttribute($value)
+    {
+        if ($value === null) return null;
+        if (substr($value, 0, 3) === 'eyJ') {
+            try {
+                return \Illuminate\Support\Facades\Crypt::decrypt($value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+        return $value;
+    }
+
+    public function setDonorAddressAttribute($value)
+    {
+        $this->attributes['donor_address'] = $value !== null
             ? \Illuminate\Support\Facades\Crypt::encrypt($value)
             : null;
     }

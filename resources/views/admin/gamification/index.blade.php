@@ -2,6 +2,12 @@
 
 @section('back', '/dashboard')
 
+@php
+    $breadcrumbs = [
+        ['label' => __('islamic.navigation.gamification')],
+    ];
+@endphp
+
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
@@ -135,7 +141,7 @@
                                     ">
                                         @if($tier)
                                             <span class="w-4 h-4 inline-flex items-center justify-center flex-shrink-0">
-                                                <svg class="w-full h-full" viewBox="0 0 24 24" fill="currentColor">{!! $tier->icon_svg !!}</svg>
+                                                <svg class="w-full h-full" viewBox="0 0 24 24" fill="currentColor">@safe_svg($tier->icon_svg)</svg>
                                             </span>
                                             {{ $tier->name }}
                                         @else
@@ -161,7 +167,9 @@
                                         <button 
                                             type="button"
                                             class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200"
-                                            onclick="openAdjustModal({{ $member->user->id }}, '{{ $member->user->name }}')"
+                                            data-name="{{ $member->user->name }}"
+                                            data-route="{{ route('admin.gamification.adjust', $member->user) }}"
+                                            onclick="openAdjustModal(this)"
                                         >
                                             Adjust
                                         </button>
@@ -217,7 +225,7 @@
                             ">
                                 @if($tier)
                                     <span class="w-4 h-4 inline-flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-full h-full" viewBox="0 0 24 24" fill="currentColor">{!! $tier->icon_svg !!}</svg>
+                                        <svg class="w-full h-full" viewBox="0 0 24 24" fill="currentColor">@safe_svg($tier->icon_svg)</svg>
                                     </span>
                                     {{ $tier->name }}
                                 @else
@@ -248,7 +256,9 @@
                         <div class="flex gap-2 pt-1">
                             <button type="button"
                                     class="flex-1 text-center px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition"
-                                    onclick="openAdjustModal({{ $member->user->id }}, '{{ $member->user->name }}')">
+                                    data-name="{{ $member->user->name }}"
+                                    data-route="{{ route('admin.gamification.adjust', $member->user) }}"
+                                    onclick="openAdjustModal(this)">
                                 Adjust
                             </button>
                             <a href="{{ route('admin.gamification.transactions', $member->user->id) }}"
@@ -311,9 +321,9 @@
 
 @section('scripts')
 <script>
-function openAdjustModal(userId, userName) {
-    document.getElementById('modal-user-name').textContent = userName;
-    document.getElementById('adjust-form').action = '/admin/gamification/members/' + userId + '/adjust';
+function openAdjustModal(btn) {
+    document.getElementById('modal-user-name').textContent = btn.dataset.name;
+    document.getElementById('adjust-form').action = btn.dataset.route;
     document.getElementById('adjust-modal').classList.remove('hidden');
 }
 
@@ -321,17 +331,6 @@ function closeAdjustModal() {
     document.getElementById('adjust-modal').classList.add('hidden');
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('page')) {
-        const table = document.getElementById('gamification-table');
-        if (table) {
-            setTimeout(() => {
-                table.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
-    }
-});
 </script>
 @endsection
 

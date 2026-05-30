@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DonationRequest extends FormRequest
 {
@@ -51,7 +52,13 @@ class DonationRequest extends FormRequest
                     }
                 },
             ],
-            'amil_user_id' => 'nullable|integer|exists:users,id',
+            'amil_user_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')->where(function ($query) {
+                    $query->where('is_amil', true);
+                }),
+            ],
             'akad_date' => [
                 'nullable',
                 'date',
