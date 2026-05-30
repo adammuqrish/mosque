@@ -110,8 +110,8 @@ class ReportController extends Controller
         
         $donationStats = (clone $donationBase)->selectRaw('COUNT(*) as total_count, SUM(amount) as total_amount, SUM(CASE WHEN source = "cash" THEN 1 ELSE 0 END) as cash_count, SUM(CASE WHEN source = "online" THEN 1 ELSE 0 END) as online_count')->first();
         
-        $cashCount = $donationStats->cash_count ?? 0;
-        $onlineCount = $donationStats->online_count ?? 0;
+        $cashCount = isset($donationStats) ? ($donationStats->cash_count ?? 0) : 0;
+        $onlineCount = isset($donationStats) ? ($donationStats->online_count ?? 0) : 0;
 
         $withdrawalBase = $reportType === 'yearly'
             ? WithdrawalRequest::whereYear('created_at', $year)->where('status', 'approved')
