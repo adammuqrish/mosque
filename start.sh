@@ -7,23 +7,20 @@ echo "=== Starting deployment setup ==="
 echo "--- Ensuring APP_KEY is set ---"
 php artisan key:generate --no-interaction -q || echo "APP_KEY already set, skipping"
 
-echo "--- Running migrations ---"
-php artisan migrate --force --no-interaction 2>&1
-if [ $? -ne 0 ]; then
-    echo "ERROR: Migration failed! Checking pending migrations..."
-    php artisan migrate:status 2>&1
-fi
-echo "--- Migrations complete ---"
-
-echo "--- Clearing stale caches ---"
+echo "--- Clearing all caches ---"
 php artisan config:clear --no-interaction 2>&1 || true
 php artisan cache:clear --no-interaction 2>&1 || true
+php artisan view:clear --no-interaction 2>&1 || true
+php artisan route:clear --no-interaction 2>&1 || true
+
+echo "--- Checking migration status ---"
+php artisan migrate:status --no-interaction 2>&1
 
 echo "--- Running migrations ---"
 php artisan migrate --force --no-interaction 2>&1
-if [ $? -ne 0 ]; then
-    echo "ERROR: Migration failed! Checking pending migrations..."
-    php artisan migrate:status 2>&1
+MIGRATE_EXIT=$?
+if [ $MIGRATE_EXIT -ne 0 ]; then
+    echo "ERROR: Migration failed with exit code $MIGRATE_EXIT"
 fi
 echo "--- Migrations complete ---"
 

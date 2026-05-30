@@ -27,14 +27,14 @@ RUN npm ci --no-audit --no-fund
 
 COPY composer.json composer.lock ./
 
-# Create .env from example
-COPY .env.example .env
-
 # Install dependencies without scripts (avoid key:generate during build)
 RUN composer install --optimize-autoloader --no-dev --no-interaction --no-scripts
 
 # Copy full project (includes artisan file)
 COPY . .
+
+# Remove local cache and .env that may have been copied
+RUN rm -f bootstrap/cache/config.php .env
 
 # Compile frontend assets
 RUN npm run production --no-interaction 2>/dev/null || echo "Asset compilation skipped"
