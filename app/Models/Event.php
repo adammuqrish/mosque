@@ -9,6 +9,8 @@ class Event extends Model
 {
     use HasFactory;
 
+    public const CATEGORIES = ['religious', 'charity', 'education', 'community', 'youth', 'elderly', 'maintenance'];
+
     protected $fillable = [
         'title',
         'description',

@@ -7,10 +7,19 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notifications = Auth::user()->notifications()->latest()->paginate(20);
-        return view('notifications.index', compact('notifications'));
+        $filter = $request->input('filter', 'all');
+        $query = Auth::user()->notifications()->latest();
+
+        if ($filter === 'unread') {
+            $query->whereNull('read_at');
+        } elseif ($filter === 'read') {
+            $query->whereNotNull('read_at');
+        }
+
+        $notifications = $query->paginate(20);
+        return view('notifications.index', compact('notifications', 'filter'));
     }
 
     public function markAllRead()
