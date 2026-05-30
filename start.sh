@@ -2,7 +2,7 @@
 
 PORT=${PORT:-8080}
 
-echo "=== Starting deployment setup ==="
+echo "=== Starting deployment setup v2 ==="
 
 echo "--- Ensuring APP_KEY is set ---"
 php artisan key:generate --no-interaction -q || echo "APP_KEY already set, skipping"
