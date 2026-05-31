@@ -2,11 +2,8 @@
 
 @section('title', 'Manage Amils')
 
-@section('back', '/admin/settings')
-
 @php
     $breadcrumbs = [
-        ['label' => 'Settings', 'url' => '/admin/settings'],
         ['label' => 'Manage Amils'],
     ];
 @endphp

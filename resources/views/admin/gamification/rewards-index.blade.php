@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('back', route('admin.gamification.index'))
+
 @php
     $breadcrumbs = [
         ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],

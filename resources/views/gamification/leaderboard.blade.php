@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-{{-- Back goes to previous page via layout default --}}
+@section('back', route('gamification.dashboard'))
 
 @php
     $breadcrumbs = [
