@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('back', '/dashboard')
+{{-- Back goes to previous page via layout default --}}
 
 @section('title', __('islamic.navigation.requests'))
 

@@ -1,7 +1,3 @@
-@php
-    $back = route('dashboard');
-@endphp
-
 @extends('layouts.app')
 
 @section('title', 'Registration Codes')

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('back', '/dashboard')
+@section('back', route('admin.gamification.index'))
 
 @php
     $breadcrumbs = [
