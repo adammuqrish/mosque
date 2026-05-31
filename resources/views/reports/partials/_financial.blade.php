@@ -214,7 +214,10 @@
             options: {
                 responsive: true, maintainAspectRatio: true,
                 plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': RM ' + ctx.parsed.y.toLocaleString('en-MY', {minimumFractionDigits: 2}); } } } },
-                scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return 'RM ' + v.toLocaleString(); } } } }
+                scales: { 
+                    x: { ticks: { maxRotation: 45, minRotation: 0 } },
+                    y: { beginAtZero: true, ticks: { callback: function(v) { return 'RM ' + v.toLocaleString(); } } } 
+                }
             }
         });
     });

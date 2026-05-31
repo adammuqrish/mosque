@@ -110,8 +110,8 @@ class ReportController extends Controller
         
         $donationStats = (clone $donationBase)->selectRaw('COUNT(*) as total_count, SUM(amount) as total_amount, SUM(CASE WHEN source = "cash" THEN 1 ELSE 0 END) as cash_count, SUM(CASE WHEN source = "online" THEN 1 ELSE 0 END) as online_count')->first();
         
-        $cashCount = isset($donationStats) ? ($donationStats->cash_count ?? 0) : 0;
-        $onlineCount = isset($donationStats) ? ($donationStats->online_count ?? 0) : 0;
+        $cashCount = $donationStats->cash_count ?? 0;
+        $onlineCount = $donationStats->online_count ?? 0;
 
         $withdrawalBase = $reportType === 'yearly'
             ? WithdrawalRequest::whereYear('created_at', $year)->where('status', 'approved')
@@ -138,20 +138,6 @@ class ReportController extends Controller
             $categoryBreakdown[$key] = $catTotals[$key] ?? 0;
         }
 
-        // Chart data (last 6 months)
-        $chartLabels = [];
-        $chartDonations = [];
-        $chartExpenses = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $m = now()->subMonths($i);
-            $chartLabels[] = $m->format('M');
-            $chartDonations[] = Donation::whereMonth('donation_date', $m->month)
-                ->whereYear('donation_date', $m->year)->sum('amount');
-            $chartExpenses[] = WithdrawalRequest::where('status', 'approved')
-                ->whereMonth('approved_at', $m->month)
-                ->whereYear('approved_at', $m->year)->sum('amount');
-        }
-
         // Fund purpose breakdown (In vs Out per purpose, split by Shariah type)
         $fundPurposeBreakdown = [];
         $purposes = \App\Models\FundPurpose::active()->ordered()->pluck('name')->toArray();
@@ -172,7 +158,21 @@ class ReportController extends Controller
             }
         }
 
-        // Gamification stats
+        // Chart data (last 6 months)
+        $chartLabels = [];
+        $chartDonations = [];
+        $chartExpenses = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $m = now()->startOfMonth()->subMonths($i);
+            $chartLabels[] = $m->format('M Y');
+            $chartDonations[] = Donation::whereMonth('donation_date', $m->month)
+                ->whereYear('donation_date', $m->year)->sum('amount');
+            $chartExpenses[] = WithdrawalRequest::where('status', 'approved')
+                ->whereMonth('approved_at', $m->month)
+                ->whereYear('approved_at', $m->year)->sum('amount');
+        }
+
+        // Gamification stats (moved from Blade)
         $gamTotalMembers = \App\Models\MemberPoints::count();
         $gamTotalEarned = \App\Models\PointTransaction::where('type', 'earned')->sum('points');
         $gamTotalRedeemed = abs(\App\Models\PointTransaction::where('type', 'redeemed')->sum('points'));
