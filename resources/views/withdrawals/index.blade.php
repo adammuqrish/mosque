@@ -33,7 +33,7 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2">Amount (RM)</label>
                     <input type="number" step="0.01" name="amount"
                         class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        placeholder="0.00" required oninput="validateBalance()">
+                        placeholder="0.00" required oninput="validateBalance(); updateSubmitButtonState()">
                     @error('amount')
                     <p class="text-red-500 text-xs mt-1 flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +145,7 @@
                     </svg>
                     Auto Fill (Demo)
                 </button>
-                <button type="submit"
+                <button type="submit" id="submitBtn"
                     class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 min-h-[44px]">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -302,7 +302,7 @@
                             <span class="text-gray-400 text-xs italic">—</span>
                         @endif
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-700 font-medium">{{ $req->requester->name ?? 'Deleted User' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-700 font-medium">{{ $req->requester->name }}</td>
                     <td class="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{{ $req->purpose }}</td>
                     <td class="px-4 py-3 text-sm font-bold text-emerald-600">RM {{ number_format($req->amount, 2) }}</td>
                     <td class="px-4 py-3 text-sm">
@@ -375,19 +375,19 @@
                         </div>
                         @elseif($req->status == 'maker_checked')
                         <div class="text-xs text-gray-500">
-                            <span class="text-orange-600 font-medium">Checked</span> by {{ $req->makerChecker?->name ?? '-' }}
+                            <span class="text-orange-600 font-medium">Checked</span> by {{ $req->makerChecker->name ?? '-' }}
                             <span class="text-gray-400">&bull;</span>
                             {{ $req->maker_checked_at ? $req->maker_checked_at->format('d M Y') : '' }}
                         </div>
                         @elseif($req->status == 'approved')
                         <span class="text-xs text-gray-500">
-                            {{ $req->approver?->name ?? '-' }}
+                            {{ $req->approver->name ?? '-' }}
                             <span class="text-gray-400">&bull;</span>
                             {{ $req->approved_at ? $req->approved_at->format('d M Y') : '' }}
                         </span>
                         @elseif($req->status == 'rejected')
                         <span class="text-xs text-gray-500">
-                            {{ $req->rejector?->name ?? '-' }}
+                            {{ $req->rejector->name ?? '-' }}
                             <span class="text-gray-400">&bull;</span>
                             {{ $req->rejected_at ? $req->rejected_at->format('d M Y') : '' }}
                         </span>
@@ -417,7 +417,7 @@
         <div class="p-4 hover:bg-gray-50 transition">
             <div class="flex items-start justify-between mb-2">
                 <div>
-                    <p class="text-sm font-medium text-gray-800">{{ $req->requester->name ?? 'Deleted User' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ $req->requester->name }}</p>
                     <p class="text-xs text-gray-500">{{ $req->created_at->format('d M Y') }}</p>
                     <div class="flex items-center gap-1.5 mt-1 flex-wrap">
                         @if($req->type === 'zakat')
@@ -584,6 +584,31 @@
             display.textContent = 'RM ' + balance.toLocaleString('en', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         } else {
             display.textContent = '—';
+        }
+        updateSubmitButtonState();
+    }
+
+    function updateSubmitButtonState() {
+        const amount = parseFloat(document.querySelector('input[name="amount"]').value) || 0;
+        const type = document.getElementById('withdrawalTypeSelect').value;
+        const autoPurpose = ['zakat', 'zakat_fitr', 'waqf'].includes(type);
+        const purpose = autoPurpose ? 'General Fund' : document.getElementById('fundPurposeSelectSadaqah').value;
+        const purposeBalance = (purposeTypeBalances[purpose] && purposeTypeBalances[purpose][type] !== undefined)
+            ? purposeTypeBalances[purpose][type]
+            : null;
+        const typeBalance = typeBalances[type] || 0;
+        const submitBtn = document.getElementById('submitBtn');
+
+        const purposeBlocked = purposeBalance !== null && purposeBalance <= 0;
+        const amountExceedsType = amount > 0 && amount > typeBalance;
+        const amountExceedsPurpose = amount > 0 && purposeBalance !== null && amount > purposeBalance;
+
+        if (purposeBlocked || amountExceedsType || amountExceedsPurpose) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
     }
 
