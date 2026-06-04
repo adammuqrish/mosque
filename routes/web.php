@@ -15,6 +15,33 @@ use App\Http\Controllers\Admin\GamificationAdminController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AmilAdminController;
 use App\Http\Controllers\LandingController;
+use Illuminate\Support\Facades\Mail;
+
+// Test email route
+Route::get('/_test-email', function () {
+    $mailer = config('mail.default');
+    $host = config('mail.mailers.smtp.host');
+    $port = config('mail.mailers.smtp.port');
+    $queue = config('queue.default');
+
+    try {
+        Mail::raw('Test email from mosque app at ' . now(), function ($msg) {
+            $msg->to('test@example.com')
+                ->subject('Test Email ' . now()->format('H:i:s'));
+        });
+        $result = 'Email sent successfully';
+    } catch (\Exception $e) {
+        $result = 'Error: ' . $e->getMessage();
+    }
+
+    return response()->json([
+        'mailer' => $mailer,
+        'host' => $host,
+        'port' => $port,
+        'queue' => $queue,
+        'result' => $result,
+    ]);
+});
 
 // Landing page — guests see landing, authenticated users go to dashboard
 Route::get('/', function () {
