@@ -38,6 +38,7 @@ timedatectl set-timezone Asia/Kuala_Lumpur 2>/dev/null || true
 echo "    set to Asia/Kuala_Lumpur"
 
 echo "==> 4/9  Docker"
+apt-get install -y git >/dev/null 2>&1 || true
 if ! command -v docker >/dev/null 2>&1; then
     apt-get update -y
     apt-get install -y ca-certificates curl gnupg
