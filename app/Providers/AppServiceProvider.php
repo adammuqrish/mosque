@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Transports\BrevoTransport;
 use App\Transports\ResendTransport;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +19,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->afterResolving('mail.manager', function ($mailManager) {
             $mailManager->extend('resend', function ($config) {
                 return new ResendTransport(
+                    new \GuzzleHttp\Client(),
+                    $config['api_key']
+                );
+            });
+
+            $mailManager->extend('brevo', function ($config) {
+                return new BrevoTransport(
                     new \GuzzleHttp\Client(),
                     $config['api_key']
                 );
