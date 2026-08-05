@@ -48,7 +48,7 @@ class EventFactory extends Factory
         'Orphanage',
     ];
 
-    private $gamificationCategories = ['education', 'community', 'religious', 'charity', 'maintenance', 'youth', 'elderly'];
+    private $gamificationCategories = \App\Models\Event::CATEGORIES;
 
     public function definition()
     {

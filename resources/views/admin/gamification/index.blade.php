@@ -2,6 +2,8 @@
 
 {{-- Back goes to previous page via layout default --}}
 
+@section('breadcrumbs_handled', true)
+
 @php
     $breadcrumbs = [
         ['label' => __('islamic.navigation.gamification')],
@@ -10,6 +12,9 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
+    <div class="max-w-7xl mx-auto mb-4">
+        @include('partials.breadcrumbs')
+    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
         
         {{-- Header --}}
@@ -167,14 +172,14 @@
                                         <button 
                                             type="button"
                                             class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200"
-                                            data-name="{{ $member->user->name ?? 'Deleted' }}"
+                                            data-name="{{ $member->user->name ?? '' }}"
                                             data-route="{{ route('admin.gamification.adjust', $member->user) }}"
                                             onclick="openAdjustModal(this)"
                                         >
                                             Adjust
                                         </button>
                                         <a 
-                                            href="{{ route('admin.gamification.transactions', $member->user->id ?? 0) }}"
+                                            href="{{ route('admin.gamification.transactions', $member->user->id) }}"
                                             class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
                                         >
                                             History
@@ -256,12 +261,12 @@
                         <div class="flex gap-2 pt-1">
                             <button type="button"
                                     class="flex-1 text-center px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition"
-                                    data-name="{{ $member->user->name ?? 'Deleted' }}"
+                                    data-name="{{ $member->user->name ?? '' }}"
                                     data-route="{{ route('admin.gamification.adjust', $member->user) }}"
                                     onclick="openAdjustModal(this)">
                                 Adjust
                             </button>
-                            <a href="{{ route('admin.gamification.transactions', $member->user->id ?? 0) }}"
+                            <a href="{{ route('admin.gamification.transactions', $member->user->id) }}"
                                class="flex-1 text-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
                                 History
                             </a>

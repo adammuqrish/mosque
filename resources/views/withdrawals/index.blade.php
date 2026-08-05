@@ -138,13 +138,13 @@
             </div>
 
             <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillWithdrawal()"
+                {{-- <button type="button" onclick="showConfirmDialog('Auto Fill Demo', 'This will fill in demo/test data. Are you sure?', 'Fill Data', 'bg-blue-400 hover:bg-blue-500', autoFillWithdrawal)"
                     class="w-full sm:w-auto bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 min-h-[44px]">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                     Auto Fill (Demo)
-                </button>
+                </button> --}}
                 <button type="submit" id="submitBtn"
                     class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 sm:px-6 rounded-lg transition flex items-center justify-center gap-2 min-h-[44px]">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -620,12 +620,12 @@
 
         const MAX_FILES = 5;
         if (files.length > MAX_FILES) {
-            alert('Maximum ' + MAX_FILES + ' files allowed. Only the first ' + MAX_FILES + ' will be used.');
+            showNotification('warning', 'File Limit Exceeded', 'Maximum ' + MAX_FILES + ' files allowed. Only the first ' + MAX_FILES + ' will be used.');
         }
 
         Array.from(files).slice(0, MAX_FILES).forEach((file, index) => {
             if (file.size > 5 * 1024 * 1024) {
-                alert(`${file.name} exceeds 5MB limit and will be skipped.`);
+                showNotification('error', 'File Too Large', `${file.name} exceeds 5MB limit and will be skipped.`);
                 return;
             }
 

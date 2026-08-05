@@ -232,12 +232,12 @@
 
                 <!-- BUTTON -->
                 <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillProfile()" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 sm:px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2">
+                    {{-- <button type="button" onclick="showConfirmDialog('Auto Fill Demo', 'This will fill in demo/test data. Are you sure?', 'Fill Data', 'bg-blue-400 hover:bg-blue-500', autoFillProfile)" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 sm:px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                         Auto Fill (Demo)
-                    </button>
+                    </button> --}}
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-200 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>

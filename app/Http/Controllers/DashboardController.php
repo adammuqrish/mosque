@@ -44,7 +44,7 @@ class DashboardController extends Controller
 
         $sort = $request->get('sort', 'event_date');
         $direction = $request->get('direction', 'asc');
-        
+
         $allowedSorts = ['event_date', 'title', 'status', 'created_at', 'max_volunteers'];
         if (!in_array($sort, $allowedSorts)) {
             $sort = 'event_date';
@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ->orderBy($sort, $direction);
 
         $totalOpenCount = $openEventsQuery->count();
-        $openEvents = $openEventsQuery->paginate(10);
+        $openEvents = $openEventsQuery->limit(6)->get();
 
         $donationStats = [
             'zakat' => Donation::where('category', 'zakat')->sum('amount'),
@@ -96,8 +96,8 @@ class DashboardController extends Controller
         }
 
         return view('dashboard', compact(
-            'recommendedEvents', 'openEvents', 'totalOpenCount', 'myEvents', 'myDonationStats',
-            'hasCriteria', 'sort', 'direction', 'donationStats'
+            'recommendedEvents', 'myEvents', 'openEvents', 'totalOpenCount',
+            'hasCriteria', 'sort', 'direction', 'donationStats', 'myDonationStats'
         ));
     }
 }

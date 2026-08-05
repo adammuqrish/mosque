@@ -170,6 +170,12 @@
         </div>
     </div>
 
+    @if(!empty($dataLimited))
+        <div style="margin-top:2mm;padding:2mm 3mm;background:#fef3c7;border:1px solid #fbbf24;border-radius:3px;font-size:8px;color:#92400e;">
+            Showing the latest records only (top 100 members, latest 500 point transactions, latest 500 badge earnings) to keep the PDF manageable. Use the CSV export for the full dataset.
+        </div>
+    @endif
+
     {{-- Stats Overview --}}
     <div class="stats">
         <div class="stat-box">

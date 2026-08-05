@@ -198,10 +198,10 @@
                     &middot; {{ $event->location ?? $event->event_location ?? '—' }}
                 </p>
             </div>
-            <form action="{{ route('volunteer.leave', $event->id) }}" method="POST" class="flex-shrink-0" onsubmit="return confirm('Leave this event?')">
+            <form action="{{ route('volunteer.leave', $event->id) }}" method="POST" class="flex-shrink-0" id="leave-form-{{ $event->id }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="text-xs text-red-500 hover:text-red-700 font-medium transition">Leave</button>
+                <button type="button" onclick="showConfirmDialog('Leave Event', 'Leave this event?', 'Yes, Leave', 'bg-red-500 hover:bg-red-600', function(){ document.getElementById('leave-form-{{ $event->id }}').submit(); })" class="text-xs text-red-500 hover:text-red-700 font-medium transition">Leave</button>
             </form>
         </div>
         @endforeach

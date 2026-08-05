@@ -13,7 +13,7 @@ class Donation extends Model
         'user_id', 'amount', 'category', 'type', 'fund_purpose', 'asnaf_category',
         'source', 'status', 'reference', 'description', 'donation_date',
         'receipt_number',
-        'verified_by', 'verified_at',
+        'verified_by', 'verified_at', 'rejection_reason',
         'donor_name', 'donor_ic', 'donor_phone', 'donor_email', 'donor_address',
     ];
 

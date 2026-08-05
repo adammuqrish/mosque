@@ -2,6 +2,8 @@
 
 @section('back', route('admin.gamification.index'))
 
+@section('breadcrumbs_handled', true)
+
 @php
     $breadcrumbs = [
         ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
@@ -11,6 +13,9 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
+    <div class="max-w-7xl mx-auto mb-4">
+        @include('partials.breadcrumbs')
+    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {{-- Header --}}

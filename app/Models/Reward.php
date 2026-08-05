@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\Storage;
 
 class Reward extends Model
 {
+    public const CATEGORIES = ['facilities', 'recognition', 'events', 'merchandise_common', 'merchandise_limited'];
+
+    public const CATEGORY_EMOJIS = [
+        'facilities' => '🏛️',
+        'recognition' => '🏆',
+        'events' => '🎉',
+        'merchandise_common' => '🎁',
+        'merchandise_limited' => '🎁',
+    ];
+
     protected $fillable = [
         'code',
         'name',

@@ -13,12 +13,6 @@ use App\Http\Requests\VolunteerProfileRequest;
 
 class VolunteerController extends Controller
 {
-    public function profile()
-    {
-        $profile = VolunteerProfile::where('user_id', Auth::id())->first();
-        return view('volunteer.profile', compact('profile'));
-    }
-
     public function updateProfile(VolunteerProfileRequest $request)
     {
         // STEP 1: Get validated and sanitized data

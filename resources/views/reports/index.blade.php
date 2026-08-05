@@ -97,8 +97,8 @@
                             <span>Donations</span>
                         </button>
                         <div x-show="open" x-transition class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-20 mx-1" style="display: none;">
-                            <a href="{{ route('reports.export.donations.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-green-50 rounded-t-lg min-h-[44px] flex items-center">CSV</a>
-                            <a href="{{ route('reports.export.donations.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-green-50 rounded-b-lg min-h-[44px] flex items-center">PDF</a>
+                             <a href="{{ route('reports.export.donations.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-green-50 rounded-t-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z M8 12h8 M8 8h8 M8 16h5"/></svg>CSV</a>
+                             <a href="{{ route('reports.export.donations.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-green-50 rounded-b-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>PDF</a>
                         </div>
                     </div>
 
@@ -108,8 +108,8 @@
                             <span>Events</span>
                         </button>
                         <div x-show="open" x-transition class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-20 mx-1" style="display: none;">
-                            <a href="{{ route('reports.export.events.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 rounded-t-lg min-h-[44px] flex items-center">CSV</a>
-                            <a href="{{ route('reports.export.events.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 rounded-b-lg min-h-[44px] flex items-center">PDF</a>
+                             <a href="{{ route('reports.export.events.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 rounded-t-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z M8 12h8 M8 8h8 M8 16h5"/></svg>CSV</a>
+                             <a href="{{ route('reports.export.events.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 rounded-b-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>PDF</a>
                         </div>
                     </div>
 
@@ -119,8 +119,8 @@
                             <span>Attendance</span>
                         </button>
                         <div x-show="open" x-transition class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-20 mx-1" style="display: none;">
-                            <a href="{{ route('reports.export.attendance.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 rounded-t-lg min-h-[44px] flex items-center">CSV</a>
-                            <a href="{{ route('reports.export.attendance.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 rounded-b-lg min-h-[44px] flex items-center">PDF</a>
+                             <a href="{{ route('reports.export.attendance.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 rounded-t-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z M8 12h8 M8 8h8 M8 16h5"/></svg>CSV</a>
+                             <a href="{{ route('reports.export.attendance.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 rounded-b-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>PDF</a>
                         </div>
                     </div>
 
@@ -130,8 +130,8 @@
                             <span>Financial</span>
                         </button>
                         <div x-show="open" x-transition class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-20 mx-1" style="display: none;">
-                            <a href="{{ route('reports.export.financial.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 rounded-t-lg min-h-[44px] flex items-center">CSV</a>
-                            <a href="{{ route('reports.export.financial.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 rounded-b-lg min-h-[44px] flex items-center">PDF</a>
+                             <a href="{{ route('reports.export.financial.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 rounded-t-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z M8 12h8 M8 8h8 M8 16h5"/></svg>CSV</a>
+                             <a href="{{ route('reports.export.financial.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 rounded-b-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>PDF</a>
                         </div>
                     </div>
 
@@ -141,8 +141,8 @@
                             <span>Gamification</span>
                         </button>
                         <div x-show="open" x-transition class="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-20 mx-1" style="display: none;">
-                            <a href="{{ route('reports.export.gamification.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 rounded-t-lg min-h-[44px] flex items-center">CSV</a>
-                            <a href="{{ route('reports.export.gamification.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 rounded-b-lg min-h-[44px] flex items-center">PDF</a>
+                             <a href="{{ route('reports.export.gamification.csv', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 rounded-t-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z M8 12h8 M8 8h8 M8 16h5"/></svg>CSV</a>
+                             <a href="{{ route('reports.export.gamification.pdf', ['month' => $month, 'year' => $year, 'report_type' => $reportType]) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 rounded-b-lg min-h-[44px] flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>PDF</a>
                         </div>
                     </div>
                 </div>

@@ -336,13 +336,13 @@ $breadcrumbs = [
 
                 {{-- Navigation & Submit --}}
                 <div class="mt-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-                    <button type="button" @click="if(confirm('This will fill in demo/test data. Are you sure?')) autoFill()"
+                    {{-- <button type="button" @click="showConfirmDialog('Auto Fill Demo', 'This will fill in demo/test data. Are you sure?', 'Fill Data', 'bg-blue-500 hover:bg-blue-600', () => autoFill())"
                         class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 sm:py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                         Auto Fill (Demo)
-                    </button>
+                    </button> --}}
                     <div class="flex items-center gap-2 w-full sm:w-auto">
                         <button type="button" x-show="step > 1" @click="prevStep()"
                             class="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 sm:py-2.5 px-5 rounded-lg shadow transition flex items-center justify-center gap-1.5">
@@ -733,7 +733,7 @@ $breadcrumbs = [
                             <button type="button" onclick="showConfirmModal('Confirm Donation', 'Confirm this donation? This will mark it as verified.', 'Confirm', 'bg-green-500 hover:bg-green-600', '{{ route('donations.confirm', $donation->id) }}', 'PATCH')" class="bg-green-500 hover:bg-green-600 text-white text-[10px] px-2 py-1 rounded-md transition font-medium">
                                 Confirm
                             </button>
-                            <button type="button" onclick="showConfirmModal('Dispute Donation', 'Mark this donation as disputed?', 'Dispute', 'bg-red-500 hover:bg-red-600', '{{ route('donations.dispute', $donation->id) }}', 'PATCH')" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded-md transition font-medium">
+                            <button type="button" onclick="showConfirmModal('Dispute Donation', 'Mark this donation as disputed?', 'Dispute', 'bg-red-500 hover:bg-red-600', '{{ route('donations.dispute', $donation->id) }}', 'PATCH', true)" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-1 rounded-md transition font-medium">
                                 Dispute
                             </button>
                             @elseif($donation->status === 'confirmed')
@@ -943,7 +943,7 @@ $breadcrumbs = [
                 <button type="button" onclick="showConfirmModal('Confirm Donation', 'Confirm this donation?', 'Confirm', 'bg-green-500 hover:bg-green-600', '{{ route('donations.confirm', $donation->id) }}', 'PATCH')" class="bg-green-500 hover:bg-green-600 text-white text-[10px] px-2.5 py-1 rounded-md transition font-medium">
                     Confirm
                 </button>
-                <button type="button" onclick="showConfirmModal('Dispute Donation', 'Mark as disputed?', 'Dispute', 'bg-red-500 hover:bg-red-600', '{{ route('donations.dispute', $donation->id) }}', 'PATCH')" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-md transition font-medium">
+                <button type="button" onclick="showConfirmModal('Dispute Donation', 'Mark as disputed?', 'Dispute', 'bg-red-500 hover:bg-red-600', '{{ route('donations.dispute', $donation->id) }}', 'PATCH', true)" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-md transition font-medium">
                     Dispute
                 </button>
                 @elseif($donation->status === 'confirmed')

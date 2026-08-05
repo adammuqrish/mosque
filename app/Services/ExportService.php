@@ -303,7 +303,12 @@ public function generateEventsReport(string $format = 'csv', ?int $month = null,
         $totalMembers = MemberPoints::count();
 
         if ($format === 'pdf') {
-            return $this->generateGamificationPDF($memberPoints, $transactions, $badgeEarnings, $redemptions, $totalEarned, $totalRedeemed, $totalAdjusted, $totalRefunded, $totalMembers, $period);
+            $pdfMemberPoints = $memberPoints->take(100);
+            $pdfTransactions = $transactions->take(500);
+            $pdfBadgeEarnings = $badgeEarnings->take(500);
+            $dataLimited = $memberPoints->count() > 100 || $transactions->count() > 500 || $badgeEarnings->count() > 500;
+
+            return $this->generateGamificationPDF($pdfMemberPoints, $pdfTransactions, $pdfBadgeEarnings, $redemptions, $totalEarned, $totalRedeemed, $totalAdjusted, $totalRefunded, $totalMembers, $period, $dataLimited);
         }
 
         $filename = 'gamification_report' . ($month && $year ? '_' . sprintf('%02d-%s', $month, $year) : '') . '_' . date('Y-m-d');
@@ -408,7 +413,7 @@ public function generateEventsReport(string $format = 'csv', ?int $month = null,
         return response()->stream($callback, 200, $headers);
     }
 
-    private function generateGamificationPDF($memberPoints, $transactions, $badgeEarnings, $redemptions, $totalEarned, $totalRedeemed, $totalAdjusted, $totalRefunded, $totalMembers, $period)
+    private function generateGamificationPDF($memberPoints, $transactions, $badgeEarnings, $redemptions, $totalEarned, $totalRedeemed, $totalAdjusted, $totalRefunded, $totalMembers, $period, $dataLimited = false)
     {
         $filename = 'gamification_report_' . date('Y-m-d_His') . '.pdf';
         $headers = [
@@ -428,6 +433,7 @@ public function generateEventsReport(string $format = 'csv', ?int $month = null,
             'totalMembers' => $totalMembers,
             'period' => $period,
             'generatedAt' => now()->format('Y-m-d H:i:s'),
+            'dataLimited' => $dataLimited,
         ])->render();
 
         $pdf = \PDF::loadHTML($html);

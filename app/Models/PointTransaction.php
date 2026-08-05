@@ -22,6 +22,7 @@ class PointTransaction extends Model
     protected $casts = [
         'points' => 'integer',
         'balance_after' => 'integer',
+        'breakdown' => 'array',
     ];
 
     public function user()

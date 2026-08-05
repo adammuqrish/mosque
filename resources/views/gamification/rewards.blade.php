@@ -105,7 +105,12 @@
         {{-- My Recent Redemptions --}}
         @if(count($myRedemptions) > 0)
             <div class="mt-12">
-                <h2 class="text-xl font-bold text-gray-900 mb-6">My Redemptions</h2>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">My Redemptions</h2>
+                    <a href="{{ route('gamification.my-redemptions') }}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                        View All Redemptions →
+                    </a>
+                </div>
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                     {{-- Desktop Table --}}
                     <div class="hidden md:block overflow-x-auto">
@@ -122,7 +127,7 @@
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($myRedemptions as $redemption)
                                     <tr>
-                                        <td class="px-6 py-4 font-medium text-gray-900">{{ $redemption->reward->name ?? 'Deleted Reward' }}</td>
+                                        <td class="px-6 py-4 font-medium text-gray-900">{{ $redemption->reward->name }}</td>
                                         <td class="px-6 py-4 text-red-600">-{{ number_format($redemption->points_spent) }}</td>
                                         <td class="px-6 py-4 text-gray-500">{{ $redemption->redeemed_at->format('d M Y') }}</td>
                                         <td class="px-6 py-4">
@@ -157,7 +162,7 @@
                         @foreach($myRedemptions as $redemption)
                             <div class="p-4 space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-medium text-gray-900 text-sm">{{ $redemption->reward->name ?? 'Deleted Reward' }}</span>
+                                    <span class="font-medium text-gray-900 text-sm">{{ $redemption->reward->name }}</span>
                                     <span class="text-red-600 font-semibold text-sm">-{{ number_format($redemption->points_spent) }} pts</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs text-gray-500">

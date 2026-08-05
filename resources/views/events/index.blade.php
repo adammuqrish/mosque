@@ -208,13 +208,13 @@ $breadcrumbs = [
         </div>
 
         <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillEvent()"
+            {{-- <button type="button" onclick="showConfirmDialog('Auto Fill Demo', 'This will fill in demo/test data. Are you sure?', 'Fill Data', 'bg-blue-500 hover:bg-blue-600', autoFillEvent)"
                 class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
                 Auto Fill (Demo)
-            </button>
+            </button> --}}
             <button type="submit"
                 class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 sm:px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

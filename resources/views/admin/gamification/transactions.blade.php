@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('back', route('admin.gamification.index'))
+
+@section('breadcrumbs_handled', true)
+
 @php
     $breadcrumbs = [
         ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
@@ -9,13 +13,9 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-slate-50 py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
 
-        {{-- Back --}}
-        <a href="{{ route('admin.gamification.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition font-medium mb-6">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Back
-        </a>
+        @include('partials.breadcrumbs')
 
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -134,9 +134,8 @@
                 </div>
             @endif
         </div>
+
     </div>
 </div>
 @endsection
-
-
 

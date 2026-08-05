@@ -38,9 +38,14 @@ class GamificationService
             return ['status' => 'skipped', 'reason' => 'already_awarded'];
         }
 
-        return DB::transaction(function () use ($volunteer) {
-            $user = $volunteer->user;
-            $event = $volunteer->event;
+        $user = $volunteer->user;
+        $event = $volunteer->event;
+
+        if (!$user || !$event) {
+            return ['status' => 'error', 'reason' => 'missing_user_or_event'];
+        }
+
+        return DB::transaction(function () use ($volunteer, $user, $event) {
             $memberPoints = $this->getOrCreateMemberPoints($user);
             
             $pointsBreakdown = $this->calculatePoints($user, $event, $volunteer);

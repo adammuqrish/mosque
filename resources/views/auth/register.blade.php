@@ -134,13 +134,13 @@
                 </div>
 
                 <div class="flex gap-3 mt-6">
-                    <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillRegister()"
+                    {{-- <button type="button" onclick="showConfirmDialog('Auto Fill Demo', 'This will fill in demo/test data. Are you sure?', 'Fill Data', 'bg-blue-400 hover:bg-blue-500', autoFillRegister)"
                         class="flex-1 bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                         Auto Fill (Demo)
-                    </button>
+                    </button> --}}
                     <button type="button" @click="goNext(2)"
                         class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-sm">
                         Next Step

@@ -96,7 +96,7 @@ class DonationController extends Controller
             'donor_address' => $validated['donor_address'] ?? null,
         ]);
 
-        if (in_array($donation->category, ['zakat', 'zakat_fitr']) && ($validated['amil_name'] ?? null)) {
+        if (in_array($donation->category, ['zakat', 'zakat_fitr']) && !empty($validated['amil_name'])) {
             ZakatAkad::create([
                 'donation_id' => $donation->id,
                 'reference' => $receiptService->nextAkadReference(),
@@ -143,7 +143,7 @@ class DonationController extends Controller
         return redirect()->back()->with('success', 'Donation confirmed successfully.');
     }
 
-    public function dispute($id)
+    public function dispute(Request $request, $id)
     {
         $donation = Donation::findOrFail($id);
 
@@ -159,6 +159,7 @@ class DonationController extends Controller
             'status' => 'disputed',
             'verified_by' => auth()->id(),
             'verified_at' => now(),
+            'rejection_reason' => $request->input('rejection_reason'),
         ]);
 
         if ($donation->user) {

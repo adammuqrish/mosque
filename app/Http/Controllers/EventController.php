@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
 use App\Http\Requests\EventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Notifications\EventNotification;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -43,7 +45,7 @@ class EventController extends Controller
         $languages = $parse($validated['required_languages'] ?? '');
 
         // STEP 3: Create event with default status 'open'
-        Event::create([
+        $event = Event::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
             'event_date' => $validated['event_date'],
@@ -58,6 +60,11 @@ class EventController extends Controller
             'status' => 'open',
             'gamification_category' => $validated['gamification_category'],
         ]);
+
+        $members = User::where('role', 'member')->get();
+        foreach ($members as $member) {
+            $member->notify(new EventNotification($event, 'created'));
+        }
 
         return redirect()->route('events.manage')->with('success', 'Event created successfully!');
     }
@@ -144,9 +151,11 @@ class EventController extends Controller
 
     public function destroy($id)
     {
-        // STEP 1: Find and delete the event
         $event = Event::find($id);
         if ($event) {
+            foreach ($event->volunteers as $volunteer) {
+                $volunteer->notify(new EventNotification($event, 'deleted'));
+            }
             $event->delete();
             return redirect()->route('events.manage')->with('success', 'Event deleted successfully!');
         }
@@ -180,8 +189,13 @@ class EventController extends Controller
             return redirect()->route('events.manage')->with('error', 'Cannot reopen a cancelled event. Create a new event instead.');
         }
 
-        // STEP 12: Update status
         $event->update(['status' => $newStatus]);
+
+        if ($newStatus === 'cancelled') {
+            foreach ($event->volunteers as $volunteer) {
+                $volunteer->notify(new EventNotification($event, 'cancelled'));
+            }
+        }
 
         $statusMessages = [
             'open' => 'Event opened successfully!',

@@ -10,11 +10,8 @@
         <div class="flex items-center justify-between h-16">
             {{-- Logo --}}
             <a href="#" class="flex items-center gap-3 group">
-                <div class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                    </svg>
-                </div>
+                <img src="{{ asset('images/mosque-logo.svg') }}" alt="Al-Mukminun Mosque Logo"
+                    class="w-10 h-10 rounded-lg object-cover ring-2 ring-white/20 group-hover:ring-white/40 transition">
                 <div class="hidden sm:block">
                     <span class="text-white font-bold text-lg">Al-Mukminun</span>
                     <span class="text-emerald-200 text-xs block -mt-1">Mosque Platform</span>
@@ -142,11 +139,10 @@
                 <div class="relative">
                     {{-- Decorative mosque silhouette card --}}
                     <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 w-80 border border-white/20">
-                        {{-- Mosque icon --}}
-                        <div class="w-16 h-16 bg-[#C5A059]/20 rounded-xl flex items-center justify-center mx-auto mb-6">
-                            <svg class="w-10 h-10 text-[#C5A059]" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                            </svg>
+                        {{-- Mosque logo --}}
+                        <div class="w-24 h-24 rounded-xl overflow-hidden ring-4 ring-[#C5A059]/40 shadow-lg mx-auto mb-6">
+                            <img src="{{ asset('images/mosque-logo.svg') }}" alt="Al-Mukminun Mosque Logo"
+                                class="w-full h-full object-cover">
                         </div>
 
                         {{-- Mini stats --}}

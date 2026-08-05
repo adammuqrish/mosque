@@ -33,22 +33,13 @@ class UserSeeder extends Seeder
             'phone' => '0198765432',
         ]);
 
-        // 3. Account for JEMAAH (Volunteer 1)
+        // 3. Account for JEMAAH (Member)
         User::create([
             'name' => 'Ali Bin Abu',
             'email' => 'ali@mosque.com',
             'password' => Hash::make('password'), // Password: password
             'role' => 'member',
             'phone' => '0101112222',
-        ]);
-
-        // 4. Account for JEMAAH (Volunteer 2)
-        User::create([
-            'name' => 'Siti Aminah',
-            'email' => 'siti@mosque.com',
-            'password' => Hash::make('password'), // Password: password
-            'role' => 'member',
-            'phone' => '0123334444',
         ]);
     }
 }

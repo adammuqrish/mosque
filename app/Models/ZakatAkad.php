@@ -70,6 +70,6 @@ class ZakatAkad extends Model
         if ($this->amilUser) {
             return $this->amilUser->name;
         }
-        return $this->amil_name;
+        return $this->amil_name ?? '—';
     }
 }

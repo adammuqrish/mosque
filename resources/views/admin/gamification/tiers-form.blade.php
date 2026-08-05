@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('breadcrumbs_handled', true)
+
 @php
     $breadcrumbs = [
         ['label' => __('islamic.navigation.gamification'), 'url' => route('admin.gamification.index')],
@@ -10,13 +12,18 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-8">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-4 sm:px-6 lg:px-8">
 
-        {{-- Back --}}
-        <a href="{{ route('admin.gamification.tiers.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition font-medium mb-6">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Back
-        </a>
+        <div class="mb-4">
+            <a href="{{ route('admin.gamification.tiers.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back
+            </a>
+        </div>
+
+        @include('partials.breadcrumbs')
 
         {{-- Header --}}
         <div class="flex items-center justify-between mb-8">
@@ -120,13 +127,13 @@
 
                 {{-- Submit --}}
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-8 pt-6 border-t border-gray-200">
-                    <button type="button" onclick="if(confirm('This will fill in demo/test data. Are you sure?')) autoFillTier()"
+                    {{-- <button type="button" onclick="showConfirmDialog('Auto Fill Demo', 'This will fill in demo/test data. Are you sure?', 'Fill Data', 'bg-blue-400 hover:bg-blue-500', autoFillTier)"
                             class="w-full sm:w-auto px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white font-bold rounded-lg transition flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                         Auto Fill (Demo)
-                    </button>
+                    </button> --}}
                     <div class="flex flex-col-reverse sm:flex-row gap-3">
                         <a href="{{ route('admin.gamification.tiers.index') }}"
                            class="w-full sm:w-auto text-center px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
@@ -140,6 +147,7 @@
                 </div>
             </form>
         </div>
+
     </div>
 </div>
 

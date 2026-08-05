@@ -11,6 +11,8 @@ use App\Models\MemberPoints;
 use App\Models\PointTransaction;
 use App\Models\RewardRedemption;
 use App\Services\GamificationService;
+use App\Notifications\RewardFulfillmentNotification;
+use App\Notifications\PointsAdjustmentNotification;
 use App\Http\Requests\BadgeRequest;
 use App\Http\Requests\RewardRequest;
 use App\Http\Requests\TierMilestoneRequest;
@@ -103,6 +105,9 @@ class GamificationAdminController extends Controller
             $this->gamificationService->checkTierUpgrade($user, $memberPoints);
         });
 
+        $type = $points >= 0 ? 'adjusted' : 'revoked';
+        $user->notify(new PointsAdjustmentNotification($user, $points, $request->reason, $type));
+
         return redirect()
             ->back()
             ->with('success', "Points adjusted for {$user->name}");
@@ -149,6 +154,7 @@ class GamificationAdminController extends Controller
 
         if ($request->action === 'fulfill') {
             $redemption->markAsFulfilled($admin->id, $request->notes);
+            $redemption->user->notify(new RewardFulfillmentNotification($redemption, 'fulfilled'));
             $message = 'Reward fulfillment confirmed';
         } else {
             $this->gamificationService->getOrCreateMemberPoints($redemption->user);
@@ -171,6 +177,7 @@ class GamificationAdminController extends Controller
             }
 
             $redemption->markAsRejected($admin->id, $request->notes);
+            $redemption->user->notify(new RewardFulfillmentNotification($redemption, 'rejected'));
             $message = 'Reward rejected and points refunded';
         }
 

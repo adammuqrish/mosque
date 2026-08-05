@@ -10,7 +10,7 @@
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { font-size: 28px; color: #0d9488; letter-spacing: 3px; text-transform: uppercase; }
         .header .subtitle { font-size: 14px; color: #666; margin-top: 5px; }
-        .bismillah { text-align: center; font-size: 18px; margin: 15px 0; color: #333; }
+        .bismillah { text-align: center; font-size: 12px; margin: 15px 0; color: #555; font-style: italic; }
         .quran-verse { text-align: center; font-style: italic; font-size: 12px; color: #555; margin: 10px 0 20px; padding: 10px; background: #f0fdfa; }
         .content { text-align: center; margin: 20px 0; }
         .content p { font-size: 14px; margin: 8px 0; }
@@ -31,7 +31,7 @@
                 <p class="subtitle">{{ config('app.name') }}</p>
             </div>
 
-            <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+            <div class="bismillah">Bismillah — In the Name of Allah, the Most Gracious, the Most Merciful</div>
 
             <div class="quran-verse">
                 "Indeed, the most noble of you in the sight of Allah is the most righteous of you." — Surah Al-Hujurat (49:13)

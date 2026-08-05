@@ -8,9 +8,13 @@
         <!-- LEFT COLUMN: LOGIN FORM -->
         <div class="w-full md:w-2/3 bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="bg-emerald-800 p-6 text-center pattern-islamic">
-                <h1 class="text-2xl font-bold text-white">
-                    <span class="font-islamic text-emerald-200 text-lg mr-2">بِسْمِ ٱللَّهِ</span>Smart Mosque System
-                </h1>
+                <div class="flex items-center justify-center gap-3 mb-1">
+                    <img src="{{ asset('images/mosque-logo.svg') }}" alt="Al-Mukminun Mosque Logo"
+                        class="w-12 h-12 rounded-lg object-cover ring-2 ring-white/20 shadow-md">
+                    <h1 class="text-2xl font-bold text-white">
+                        <span class="font-islamic text-emerald-200 text-lg mr-2">بِسْمِ ٱللَّهِ</span>Smart Mosque System
+                    </h1>
+                </div>
                 <p class="text-emerald-200 text-sm">Assalamu Alaikum — Silakan log masuk untuk akses sistem.</p>
             </div>
 

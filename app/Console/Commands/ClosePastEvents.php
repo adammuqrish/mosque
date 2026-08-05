@@ -40,22 +40,14 @@ class ClosePastEvents extends Command
     {
         $this->info('Checking for past events to close...');
 
-        // Find events that are not already closed/cancelled and have passed their date
-        $pastEvents = Event::where('status', '!=', 'closed')
+        $count = Event::where('status', '!=', 'closed')
             ->where('status', '!=', 'cancelled')
             ->where('event_date', '<', now())
-            ->get();
-
-        $count = $pastEvents->count();
+            ->update(['status' => 'closed']);
 
         if ($count === 0) {
             $this->info('No past events found that need closing.');
             return Command::SUCCESS;
-        }
-
-        foreach ($pastEvents as $event) {
-            $event->update(['status' => 'closed']);
-            $this->line("  ✓ Closed event: {$event->title} (Date: {$event->event_date})");
         }
 
         $this->info("Successfully closed {$count} past event(s).");

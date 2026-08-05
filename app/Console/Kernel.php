@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('attendance:mark-pending')->hourly();
-        $schedule->command('events:close-past')->daily();
+        $schedule->command('events:close-past')->hourly();
     }
 
     /**

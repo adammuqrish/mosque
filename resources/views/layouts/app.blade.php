@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Smart Mosque System')</title>
-    
+
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/mosque-logo.svg') }}">
+
     <!-- Google Fonts: Amiri for Islamic-inspired headings -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,7 +78,9 @@
             <div class="flex justify-between items-center">
                 <!-- Left: Logo/Title -->
                 <div class="flex items-center gap-3">
-                    <a href="/" class="font-bold text-lg sm:text-xl hover:opacity-90 transition whitespace-nowrap">
+                    <a href="/" class="flex items-center gap-2 font-bold text-lg sm:text-xl hover:opacity-90 transition whitespace-nowrap">
+                        <img src="{{ asset('images/mosque-logo.svg') }}" alt="Al-Mukminun Mosque Logo"
+                            class="w-9 h-9 rounded-lg object-cover ring-2 ring-white/20">
                         <span class="text-emerald-200 text-sm mr-1 font-islamic">بِسْمِ ٱللَّهِ</span>Smart Mosque System
                     </a>
                 </div>
@@ -87,6 +91,10 @@
                         <!-- Navigation Links (Role-based) -->
                         <div class="flex items-center gap-2">
                             @if(Auth::user()->role == 'admin')
+                                <a href="{{ route('dashboard') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="Dashboard">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"></path></svg>
+                                    Dashboard
+                                </a>
                                 <a href="{{ route('donations.index') }}" class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1.5 rounded transition shadow-sm flex items-center gap-1" title="Donations">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     {{ __('islamic.donations.nav_label') }}
@@ -128,6 +136,10 @@
                                     {{ __('islamic.navigation.reports') }}
                                 </a>
                             @elseif(Auth::user()->role == 'treasurer')
+                                <a href="{{ route('dashboard') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="Dashboard">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"></path></svg>
+                                    Dashboard
+                                </a>
                                 <a href="{{ route('donations.index') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="Donations">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     {{ __('islamic.donations.nav_label') }}
@@ -143,10 +155,18 @@
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                                     {{ __('islamic.navigation.reports') }}
                                 </a>
-                            @else
-                                <a href="{{ route('gamification.dashboard') }}" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1.5 rounded transition shadow-sm flex items-center gap-1" title="Rewards & Badges">
+                            @elseif(Auth::user()->role == 'member')
+                                <a href="{{ route('dashboard') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="Dashboard">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"></path></svg>
+                                    Dashboard
+                                </a>
+                                <a href="{{ route('gamification.dashboard') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="Gamification">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-                                    {{ __('islamic.navigation.rewards') }}
+                                    {{ __('islamic.navigation.gamification') }}
+                                </a>
+                                <a href="{{ route('gamification.my-redemptions') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="My Redemptions">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0l3-3m-3 3l-3-3M5 3v18m14 0V5a2 2 0 00-2-2h-8a2 2 0 00-2 2v14"></path></svg>
+                                    My Redemptions
                                 </a>
                                 <a href="{{ route('volunteer.my-events') }}" class="text-white hover:text-emerald-200 text-xs border border-transparent hover:border-emerald-400 px-3 py-1.5 rounded transition flex items-center gap-1" title="My Events">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -259,6 +279,10 @@
                                     <svg class="w-4 h-4 transition-transform" :class="finOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
                                 <div x-show="finOpen" class="space-y-1 mt-1">
+                                    <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"></path></svg>
+                                        Dashboard
+                                    </a>
                                     <a href="{{ route('donations.index') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         {{ __('islamic.donations.nav_label') }}
@@ -293,6 +317,10 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                                         {{ __('islamic.navigation.gamification') }}
                                     </a>
+                                    <a href="{{ route('gamification.my-redemptions') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0l3-3m-3 3l-3-3M5 3v18m14 0V5a2 2 0 00-2-2h-8a2 2 0 00-2 2v14"></path></svg>
+                                        My Redemptions
+                                    </a>
                                     <a href="{{ route('admin.amils') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                         Amil Management
@@ -310,9 +338,17 @@
                                     <svg class="w-4 h-4 transition-transform" :class="mgmtOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
                                 <div x-show="mgmtOpen" class="space-y-1 mt-1">
+                                    <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"></path></svg>
+                                        Dashboard
+                                    </a>
                                     <a href="{{ route('gamification.dashboard') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                                         {{ __('islamic.navigation.gamification') }}
+                                    </a>
+                                    <a href="{{ route('gamification.my-redemptions') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0l3-3m-3 3l-3-3M5 3v18m14 0V5a2 2 0 00-2-2h-8a2 2 0 00-2 2v14"></path></svg>
+                                        My Redemptions
                                     </a>
                                     <a href="{{ route('volunteer.my-events') }}" class="block px-4 py-3 rounded hover:bg-emerald-600 transition flex items-center gap-3">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -358,15 +394,15 @@
         </div>
     </nav>
 
-    <!-- Breadcrumbs -->
-    @if(isset($breadcrumbs) && count($breadcrumbs))
-        <div class="container mx-auto mt-4 px-4 sm:px-6 lg:px-8 max-w-7xl">
-            @include('partials.breadcrumbs')
-        </div>
-    @endif
-
     <!-- STEP 6: Main Content Area -->
     <main class="flex-grow container mx-auto mt-6 px-4 sm:px-6 lg:px-8 mb-8 max-w-7xl">
+        
+        <!-- Breadcrumbs -->
+        @if(isset($breadcrumbs) && count($breadcrumbs))
+            @sectionMissing('breadcrumbs_handled')
+                @include('partials.breadcrumbs')
+            @endif
+        @endif
         
         <!-- STEP 7: Flash Messages (Snackbar style) -->
         <div id="notification-container" class="fixed top-16 left-4 right-4 sm:top-4 sm:left-auto sm:right-4 z-50 space-y-2 max-w-sm">

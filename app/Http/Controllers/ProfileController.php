@@ -26,8 +26,8 @@ class ProfileController extends Controller
         $profile = VolunteerProfile::where('user_id', $user->id)->first();
 
         // STEP 1: Check if user can regenerate referral code (monthly limit)
-        // If user already has a code and updated within the last month, prevent regeneration
-        $canRegenerate = !$user->referred_code || $user->updated_at->lt(now()->subMonth());
+        // If user already has a code and generated within the last month, prevent regeneration
+        $canRegenerate = !$user->referred_code || !$user->referred_code_updated_at || $user->referred_code_updated_at->lt(now()->subMonth());
 
         // STEP 2: Get recommended events using centralized service
         $recommendedEvents = collect();
@@ -56,8 +56,8 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         // STEP 1: Enforce monthly regeneration limit
-        // If user has a code and updated it within the last month, reject request
-        if ($user->referred_code && $user->updated_at->gt(now()->subMonth())) {
+        // If user has a code and generated it within the last month, reject request
+        if ($user->referred_code && $user->referred_code_updated_at && $user->referred_code_updated_at->gt(now()->subMonth())) {
             return response()->json([
                 'error' => 'Monthly regenerate limit reached. Please wait before generating a new code.',
                 'success' => false,
@@ -165,14 +165,17 @@ class ProfileController extends Controller
         });
 
         // STEP 3: Update or create volunteer profile
+        // NOTE: VolunteerProfile casts these columns as 'array', which handles
+        // JSON encoding automatically. Passing json_encode()'d strings here would
+        // double-encode them and break is_array() consumers (e.g. availability checkboxes).
         VolunteerProfile::updateOrCreate(
             ['user_id' => Auth::id()],
             [
-                'skills' => json_encode($skillsArray),
-                'availability' => json_encode($validated['availability'] ?? []),
-                'hobbies' => json_encode($hobbiesArray),
-                'interests' => json_encode($interestsArray),
-                'languages' => json_encode($languagesArray),
+                'skills' => $skillsArray,
+                'availability' => $validated['availability'] ?? [],
+                'hobbies' => $hobbiesArray,
+                'interests' => $interestsArray,
+                'languages' => $languagesArray,
                 'location' => $validated['location'] ?? null,
                 'health_status' => $validated['health_status'] ?? null,
                 'experience' => $validated['experience'] ?? null,

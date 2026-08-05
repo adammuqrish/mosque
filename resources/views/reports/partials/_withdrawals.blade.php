@@ -72,7 +72,7 @@
                 </div>
                 <div class="text-sm text-gray-800">{{ $wd->purpose }}</div>
                 <div class="flex justify-between text-xs text-gray-500">
-                    <span>Requested by: {{ $wd->requester->name ?? 'Deleted User' }}</span>
+                    <span>Requested by: {{ $wd->requester->name }}</span>
                     <span>Approved by: {{ $wd->approver->name ?? '-' }}</span>
                 </div>
             </div>

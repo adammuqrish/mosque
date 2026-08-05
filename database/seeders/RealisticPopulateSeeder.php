@@ -261,7 +261,7 @@ class RealisticPopulateSeeder extends Seeder
             'Masjid Jamek', 'Community Hall', 'Youth Center', 'Elderly Home', 'Orphanage'
         ];
 
-        $gamificationCategories = ['education', 'community', 'religious', 'charity', 'maintenance', 'youth', 'elderly'];
+        $gamificationCategories = \App\Models\Event::CATEGORIES;
         
         $startDate = Carbon::now()->subMonths(24);
         $endDate = Carbon::now()->addMonths(3);
