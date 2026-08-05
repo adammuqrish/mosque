@@ -7,7 +7,7 @@
 # =============================================================================
 set -euo pipefail
 
-REPO_URL="https://github.com/adammuqrish/mosque.git"
+REPO_URL="git@github.com:adammuqrish/mosque.git"
 APP_DIR="/opt/mosque"
 APP_PORT=8080
 
