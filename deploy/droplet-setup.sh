@@ -122,12 +122,14 @@ fi
 
 echo "==> 9/9  Build + run container"
 cd "$APP_DIR"
-docker build -t mosque . 2>&1 | tail -5
+docker build -t mosque .
 docker rm -f mosque >/dev/null 2>&1 || true
+# host network: container uses the droplet's own 127.0.0.1 for MySQL (DB_HOST=127.0.0.1)
+# and nginx binds port 8080 directly on the host (protected by ufw; Cloudflare Tunnel targets 127.0.0.1:8080)
 docker run -d \
     --name mosque \
     --restart=unless-stopped \
-    -p 127.0.0.1:${APP_PORT}:8080 \
+    --network host \
     -v mosque-storage:/var/www/html/storage/app/public \
     --env-file "$APP_DIR/.env" \
     mosque
