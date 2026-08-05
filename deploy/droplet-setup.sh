@@ -21,6 +21,9 @@ if [ "$ID" != "ubuntu" ]; then
     echo "WARNING: script targets Ubuntu; you are on $ID. Continuing anyway..." >&2
 fi
 
+echo "==> 1b/9  apt-get update"
+apt-get update -y >/dev/null 2>&1 || echo "    apt-get update had warnings (continuing)"
+
 echo "==> 2/9  Swap file (1G)"
 if [ ! -f /swapfile ]; then
     fallocate -l 1G /swapfile
@@ -89,12 +92,16 @@ fi
 
 echo "==> 7/9  cloudflared (Cloudflare Tunnel)"
 if ! command -v cloudflared >/dev/null 2>&1; then
-    curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg -o /usr/share/keyrings/cloudflare-main.gpg 2>/dev/null || \
-    curl -fsSL https://pkg.cloudflare.com/cloudflare-archive.key.gpg -o /usr/share/keyrings/cloudflare-main.gpg 2>/dev/null
-    echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" > /etc/apt/sources.list.d/cloudflared.list 2>/dev/null || true
-    apt-get update -y
-    apt-get install -y cloudflared || { echo "WARNING: cloudflared install failed — install manually (see https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)."; }
-    echo "    cloudflared installed"
+    ARCH="$(dpkg --print-architecture)"
+    if [ "$ARCH" = "amd64" ]; then
+        curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared
+    elif [ "$ARCH" = "arm64" ]; then
+        curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/local/bin/cloudflared
+    else
+        echo "WARNING: no prebuilt cloudflared for arch $ARCH — install manually." >&2
+    fi
+    chmod +x /usr/local/bin/cloudflared
+    command -v cloudflared >/dev/null 2>&1 && echo "    cloudflared installed" || echo "    WARNING: cloudflared not installed"
 else
     echo "    cloudflared already installed"
 fi
