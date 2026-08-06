@@ -41,7 +41,8 @@ class BatchDonationRequest extends FormRequest
     {
         $donations = $this->input('donations', []);
         foreach ($donations as $i => $d) {
-            $donations[$i]['amount'] = round((float) ($d['amount'] ?? 0), 2);
+            $amount = trim((string) ($d['amount'] ?? ''));
+            $donations[$i]['amount'] = $amount !== '' ? round((float) $amount, 2) : null;
             $donations[$i]['category'] = 'sadaqah';
             $donations[$i]['description'] = isset($d['description']) ? strip_tags(trim($d['description'])) : null;
             $donations[$i]['fund_purpose'] = isset($d['fund_purpose']) ? strip_tags(trim($d['fund_purpose'])) : null;
