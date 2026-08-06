@@ -206,7 +206,11 @@ class GamificationSeeder extends Seeder
             ],
         ];
 
+        $existing = Badge::pluck('id', 'code')->toArray();
         foreach ($badges as $badge) {
+            if (array_key_exists($badge['code'], $existing)) {
+                continue;
+            }
             Badge::create($badge);
         }
     }
