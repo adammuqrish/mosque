@@ -18,7 +18,7 @@ class BatchDonationRequest extends FormRequest
             'donations.*.amount' => 'required|numeric|min:0.01|max:9999999999.99',
             'donations.*.source' => 'required|in:cash,online',
             'donations.*.donation_date' => 'required|date|before_or_equal:today',
-            'donations.*.donor_name' => 'nullable|string|max:255',
+            'donations.*.description' => 'nullable|string|max:1000',
             'donations.*.fund_purpose' => 'nullable|string|max:100',
         ];
     }
@@ -43,7 +43,7 @@ class BatchDonationRequest extends FormRequest
         foreach ($donations as $i => $d) {
             $donations[$i]['amount'] = round((float) ($d['amount'] ?? 0), 2);
             $donations[$i]['category'] = 'sadaqah';
-            $donations[$i]['donor_name'] = isset($d['donor_name']) ? strip_tags(trim($d['donor_name'])) : null;
+            $donations[$i]['description'] = isset($d['description']) ? strip_tags(trim($d['description'])) : null;
             $donations[$i]['fund_purpose'] = isset($d['fund_purpose']) ? strip_tags(trim($d['fund_purpose'])) : null;
         }
         $this->merge(['donations' => $donations]);

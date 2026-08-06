@@ -384,7 +384,7 @@ $breadcrumbs = [
                         </svg>
                     </div>
                     <h3 class="font-bold text-gray-800 mb-1">Single Entry</h3>
-                    <p class="text-xs text-gray-500">Record one sadaqah donation from a known donor who wants a receipt.</p>
+                    <p class="text-xs text-gray-500">Record one sadaqah donation — kept anonymous, add any names in the description.</p>
                 </button>
 
                 <a href="{{ route('donations.batch.form') }}"
@@ -395,7 +395,7 @@ $breadcrumbs = [
                         </svg>
                     </div>
                     <h3 class="font-bold text-gray-800 mb-1">Batch Entry</h3>
-                    <p class="text-xs text-gray-500">Enter multiple donors at once — each gets their own receipt number.</p>
+                    <p class="text-xs text-gray-500">Enter multiple sadaqah donations at once — all kept anonymous, add names in each description.</p>
                 </a>
 
                 <a href="{{ route('donations.bulk.form') }}"

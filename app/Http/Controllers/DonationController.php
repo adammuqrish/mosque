@@ -75,7 +75,11 @@ class DonationController extends Controller
 
     public function store(DonationRequest $request, ReceiptNumberService $receiptService)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $validated = $request->validated();
+
+        $isAnonymous = $validated['category'] === 'sadaqah';
 
         $donation = Donation::create([
             'user_id' => auth()->id(),
@@ -89,11 +93,11 @@ class DonationController extends Controller
             'donation_date' => $validated['donation_date'],
             'receipt_number' => $receiptService->nextDonationReceiptNumber(),
             'description' => $validated['description'] ?? null,
-            'donor_name' => $validated['donor_name'] ?? null,
-            'donor_ic' => $validated['donor_ic'] ?? null,
-            'donor_phone' => $validated['donor_phone'] ?? null,
-            'donor_email' => $validated['donor_email'] ?? null,
-            'donor_address' => $validated['donor_address'] ?? null,
+            'donor_name' => $isAnonymous ? null : ($validated['donor_name'] ?? null),
+            'donor_ic' => $isAnonymous ? null : ($validated['donor_ic'] ?? null),
+            'donor_phone' => $isAnonymous ? null : ($validated['donor_phone'] ?? null),
+            'donor_email' => $isAnonymous ? null : ($validated['donor_email'] ?? null),
+            'donor_address' => $isAnonymous ? null : ($validated['donor_address'] ?? null),
         ]);
 
         if (in_array($donation->category, ['zakat', 'zakat_fitr']) && !empty($validated['amil_name'])) {
@@ -177,6 +181,8 @@ class DonationController extends Controller
 
     public function batchStore(BatchDonationRequest $request, ReceiptNumberService $receiptService)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $validated = $request->validated();
         $count = 0;
 
@@ -191,8 +197,8 @@ class DonationController extends Controller
                 'status' => 'pending',
                 'donation_date' => $data['donation_date'],
                 'receipt_number' => $receiptService->nextDonationReceiptNumber(),
-                'donor_name' => $data['donor_name'] ?? null,
-                'description' => 'Batch entry',
+                'donor_name' => null,
+                'description' => $data['description'] ?? 'Batch entry',
             ]);
             $count++;
         }
@@ -209,6 +215,8 @@ class DonationController extends Controller
 
     public function bulkStore(BulkDonationRequest $request, ReceiptNumberService $receiptService)
     {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $validated = $request->validated();
 
         $notes = 'Kutipan Pukal';

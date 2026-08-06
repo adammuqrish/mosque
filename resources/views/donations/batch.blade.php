@@ -50,7 +50,7 @@
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fund Purpose</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Donor (Optional)</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description (Optional)</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-10"></th>
                         </tr>
                     </thead>
@@ -90,7 +90,7 @@
                                     value="{{ date('Y-m-d') }}" required>
                             </td>
                             <td class="px-3 py-2">
-                                <input type="text" name="donations[0][donor_name]"
+<input type="text" name="donations[0][description]"
                                     class="w-full border rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="(optional)">
                             </td>
                             <td class="px-3 py-2 text-center">
@@ -151,8 +151,8 @@
                                 value="{{ date('Y-m-d') }}" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Donor</label>
-                            <input type="text" name="donations[0][donor_name]"
+<label class="block text-xs font-medium text-gray-500 mb-1">Description</label>
+                            <input type="text" name="donations[0][description]"
                                 class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="(optional)">
                         </div>
                     </div>
@@ -196,7 +196,7 @@ function addRow() {
         else if (el.type === 'number') el.value = '';
         else if (el.tagName === 'SELECT') el.selectedIndex = 0;
         else if (el.type === 'text' && name && name.includes('fund_purpose')) el.value = 'General Fund';
-        else if (el.type === 'text' && name && name.includes('donor_name')) el.value = '';
+        else if (el.type === 'text' && name && name.includes('description')) el.value = '';
     });
     rowClone.setAttribute('data-row', rowIndex);
     rowClone.querySelector('.remove-btn').onclick = function() { removeRow(this); };
@@ -211,7 +211,7 @@ function addRow() {
         else if (el.type === 'number') el.value = '';
         else if (el.tagName === 'SELECT') el.selectedIndex = 0;
         else if (el.type === 'text' && name && name.includes('fund_purpose')) el.value = 'General Fund';
-        else if (el.type === 'text' && name && name.includes('donor_name')) el.value = '';
+        else if (el.type === 'text' && name && name.includes('description')) el.value = '';
     });
     cardClone.setAttribute('data-row', rowIndex);
     cardClone.querySelectorAll('[onclick*="removeRow"]').forEach(el => {
