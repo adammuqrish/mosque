@@ -60,7 +60,7 @@
                             <td class="px-3 py-2">
                                 <input type="number" step="0.01" min="0.01" name="donations[0][amount]"
                                     class="w-full border rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                    placeholder="0.00" required>
+                                    placeholder="0.00" data-req>
                             </td>
                             <td class="px-3 py-2">
                                 <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1.5 rounded-full font-medium">Sadaqah</span>
@@ -87,7 +87,7 @@
                             <td class="px-3 py-2">
                                 <input type="date" name="donations[0][donation_date]"
                                     class="w-full border rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                    value="{{ date('Y-m-d') }}" required>
+                                    value="{{ date('Y-m-d') }}" data-req>
                             </td>
                             <td class="px-3 py-2">
 <input type="text" name="donations[0][description]"
@@ -121,7 +121,7 @@
                             <label class="block text-xs font-medium text-gray-500 mb-1">Amount (RM)</label>
                             <input type="number" step="0.01" min="0.01" name="donations[0][amount]"
                                 class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                placeholder="0.00" required>
+                                placeholder="0.00" data-req>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Source</label>
@@ -148,7 +148,7 @@
                             <label class="block text-xs font-medium text-gray-500 mb-1">Date</label>
                             <input type="date" name="donations[0][donation_date]"
                                 class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                value="{{ date('Y-m-d') }}" required>
+                                value="{{ date('Y-m-d') }}" data-req>
                         </div>
                         <div>
 <label class="block text-xs font-medium text-gray-500 mb-1">Description</label>
@@ -219,8 +219,9 @@ function addRow() {
     });
     cards.appendChild(cardClone);
 
-    rowIndex++;
+rowIndex++;
     updateNumbers();
+    syncRequired();
 }
 
 function removeRow(btn) {
@@ -237,12 +238,13 @@ function removeRow(btn) {
         return;
     }
 
-    const tableRow = tbody.querySelector(`.donation-row[data-row="${index}"]`);
+const tableRow = tbody.querySelector(`.donation-row[data-row="${index}"]`);
     const mobileCard = cards.querySelector(`.donation-card[data-row="${index}"]`);
     if (tableRow) tableRow.remove();
     if (mobileCard) mobileCard.remove();
 
     updateNumbers();
+    syncRequired();
 }
 
 function updateNumbers() {
@@ -253,6 +255,21 @@ function updateNumbers() {
         el.textContent = '#' + (i + 1);
     });
 }
+
+function syncRequired() {
+    const isDesktop = window.innerWidth >= 768;
+    document.getElementById('batchTable').querySelectorAll('input[data-req]').forEach(el => {
+        if (isDesktop) el.setAttribute('required', 'required');
+        else el.removeAttribute('required');
+    });
+    document.getElementById('batchMobileCards').querySelectorAll('input[data-req]').forEach(el => {
+        if (isDesktop) el.removeAttribute('required');
+        else el.setAttribute('required', 'required');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', syncRequired);
+window.addEventListener('resize', syncRequired);
 </script>
 @endsection
 
