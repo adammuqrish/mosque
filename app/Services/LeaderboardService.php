@@ -89,11 +89,9 @@ class LeaderboardService
 
     public function getUserRank(User $user): array
     {
-        $globalRank = MemberPoints::where('total_points', '>', function ($q) use ($user) {
-            $q->select('total_points')
-              ->from('member_points')
-              ->where('user_id', $user->id);
-        })->count() + 1;
+        $userTotalPoints = (int) MemberPoints::where('user_id', $user->id)->value('total_points');
+
+        $globalRank = MemberPoints::where('total_points', '>', $userTotalPoints)->count() + 1;
 
         return [
             'global' => $globalRank,
