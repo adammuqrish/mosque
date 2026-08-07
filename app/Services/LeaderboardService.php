@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\MemberPoints;
 use App\Models\BadgeEarning;
+use App\Enums\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,7 +16,10 @@ class LeaderboardService
     public function getGlobalLeaderboard(int $limit = 10): array
     {
         return Cache::remember('leaderboard_global', self::CACHE_TTL_MINUTES * 60, function () use ($limit) {
-            return $this->buildLeaderboard(MemberPoints::orderByDesc('total_points'), $limit);
+            return $this->buildLeaderboard(
+                MemberPoints::whereHas('user', $this->memberRoleFilter())->orderByDesc('total_points'),
+                $limit
+            );
         });
     }
 
@@ -30,6 +34,7 @@ class LeaderboardService
             $endDate = $startDate->copy()->endOfMonth();
 
             $userIds = \App\Models\PointTransaction::where('type', 'earned')
+                ->whereHas('user', $this->memberRoleFilter())
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->groupBy('user_id')
                 ->selectRaw('user_id, SUM(points) as total')
@@ -65,7 +70,7 @@ class LeaderboardService
 
             foreach ($completedEvents as $entry) {
                 $user = \App\Models\User::find($entry->user_id);
-                if (!$user || $user->hide_from_leaderboard) {
+                if (!$user || $user->hide_from_leaderboard || $user->isAdmin() || $user->isTreasurer()) {
                     continue;
                 }
 
@@ -91,7 +96,8 @@ class LeaderboardService
     {
         $userTotalPoints = (int) MemberPoints::where('user_id', $user->id)->value('total_points');
 
-        $globalRank = MemberPoints::where('total_points', '>', $userTotalPoints)->count() + 1;
+        $globalRank = MemberPoints::whereHas('user', $this->memberRoleFilter())
+            ->where('total_points', '>', $userTotalPoints)->count() + 1;
 
         return [
             'global' => $globalRank,
@@ -106,6 +112,7 @@ class LeaderboardService
         
         return \App\Models\PointTransaction::where('user_id', '!=', $user->id)
             ->where('type', 'earned')
+            ->whereHas('user', $this->memberRoleFilter())
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->groupBy('user_id')
@@ -123,6 +130,13 @@ class LeaderboardService
             ->sum('points');
     }
 
+    private function memberRoleFilter(): \Closure
+    {
+        return function ($query) {
+            $query->whereNotIn('role', [Role::ADMIN->value, Role::TREASURER->value]);
+        };
+    }
+
     private function buildLeaderboard($query, int $limit): array
     {
         $leaderboard = [];
@@ -132,7 +146,7 @@ class LeaderboardService
         foreach ($query->limit($limit)->get() as $memberPoints) {
             $user = $memberPoints->user;
             
-            if (!$user || $user->hide_from_leaderboard) {
+            if (!$user || $user->hide_from_leaderboard || $user->isAdmin() || $user->isTreasurer()) {
                 continue;
             }
 
