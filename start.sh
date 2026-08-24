@@ -17,7 +17,7 @@ php artisan cache:clear --no-interaction 2>&1 || true
 php artisan view:clear --no-interaction 2>&1 || true
 php artisan route:clear --no-interaction 2>&1 || true
 
-# Build mysql connection args from DATABASE_URL (Railway-style) or DB_* env (droplet-style)
+# Build mysql connection args from DATABASE_URL (mysql://user:pass@host:port/db) or DB_* env
 if [ -n "$DATABASE_URL" ]; then
     DB_URL="${DATABASE_URL#mysql://}"
     DB_USER="${DB_URL%%:*}"

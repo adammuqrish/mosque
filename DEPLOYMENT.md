@@ -1,8 +1,11 @@
-# Deployment Guide: Laravel to Railway
+# Deployment Guide: Docker (DigitalOcean Droplet or any Docker host)
+
+> **Note:** The app was previously deployed on Railway. Railway setup has been removed.
+> Mail still uses the Resend HTTP API transport (works on any host) — see Mail section below.
 
 ## Prerequisites
 - GitHub account (already set up)
-- Railway account (railway.app)
+- A server with Docker (DigitalOcean droplet — see `deploy/droplet-setup.sh`) or any container platform
 
 ---
 
@@ -33,7 +36,7 @@ php artisan storage:link
 2. Sign up for free account
 3. Copy your `Cloudinary URL` from Dashboard
 
-### 2.2 Add to Railway Environment Variables later:
+### 2.2 Add to server environment variables later:
 ```
 CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 ```
@@ -53,30 +56,16 @@ mysqldump -u root -p mosque > database_dump.sql
 
 ---
 
-## Step 4: Railway Setup
+## Step 4: Server Setup
 
-### 4.1 Create Railway Account
-1. Go to railway.app
-2. Sign up with GitHub
+### 4.1 Provision the Droplet
+Run the setup script on a fresh Ubuntu droplet:
+```bash
+bash deploy/droplet-setup.sh
+```
 
-### 4.2 Create New Project
-1. Click "New Project" → Select "Empty Project"
-2. Name it: `mosque-app`
-
-### 4.3 Add MySQL Database
-1. Click "Add Plugin" → Select "MySQL"
-2. Wait for provisioning → Click "MySQL"
-3. Copy the `DATABASE_URL` (format: `mysql://user:pass@host:port/database`)
-
-### 4.4 Add Docker Service
-1. Click "Add" → Select "GitHub Repo"
-2. Select your Laravel repository
-3. **Important**: Select "Docker" as the runtime
-4. Railway will automatically detect the `Dockerfile` and build your PHP app
-
-### 4.5 Add Environment Variables
-In Railway dashboard for Docker service, add:
-In Railway dashboard for PHP service, add:
+### 4.2 Configure Environment Variables
+Provide on the server (systemd unit, `.env`, or shell export):
 
 | Variable | Value |
 |----------|-------|
@@ -84,35 +73,23 @@ In Railway dashboard for PHP service, add:
 | APP_DEBUG | false |
 | APP_KEY | (run `php artisan key:generate` locally, copy the key) |
 | DB_CONNECTION | mysql |
-| DB_HOST | (from Railway MySQL → "Connect" → Hostname) |
-| DB_PORT | (from Railway MySQL → "Connect" → Port) |
-| DB_DATABASE | (from Railway MySQL → "Connect" → Database) |
-| DB_USERNAME | (from Railway MySQL → "Connect" → Username) |
-| DB_PASSWORD | (from Railway MySQL → "Connect" → Password) |
+| DB_HOST | (MySQL host) |
+| DB_PORT | (MySQL port) |
+| DB_DATABASE | (database name) |
+| DB_USERNAME | (db user) |
+| DB_PASSWORD | (db password) |
 | SESSION_DRIVER | database |
 | CLOUDINARY_URL | (from Cloudinary dashboard) |
 
+The container accepts either discrete `DB_*` variables or a single
+`DATABASE_URL=mysql://user:pass@host:port/database`.
+
 ---
 
-## Step 5: Import Database to Railway
+## Step 5: Import Database to Server
 
-### Option A: Using MySQL Client (TablePlus/DBeaver/Workbench)
-1. Open your MySQL client
-2. Connect using Railway MySQL credentials
-3. Import `database_dump.sql`
-
-### Option B: Using Command Line
+Using a MySQL client (TablePlus/DBeaver/Workbench) or command line:
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Link to project
-railway link
-
-# Get connection and import
 mysql -h <hostname> -u <username> -p <database> < database_dump.sql
 ```
 
@@ -122,34 +99,49 @@ mysql -h <hostname> -u <username> -p <database> < database_dump.sql
 
 1. Push your code to GitHub:
 ```bash
-git add .
-git commit -m "Prepare for production deployment"
 git push origin main
 ```
 
-2. Railway will auto-deploy on push
+2. On the server, pull and rebuild:
+```bash
+git pull origin main
+docker compose up -d --build   # or your usual build/run command
+```
 
-3. Visit the generated Railway URL
+The `start.sh` entrypoint automatically:
+- Generates/validates `APP_KEY`
+- Runs pending migrations
+- Seeds the database only if empty
+- Rebuilds config cache
 
 ---
 
 ## Step 7: Post-Deployment
 
-### Run Migrations
+### Run Migrations (automatic on boot, or manually)
 ```bash
-railway run php artisan migrate
+docker exec <container> php artisan migrate --force
 ```
 
 ### Clear Cache
 ```bash
-railway run php artisan config:cache
-railway run php artisan cache:clear
+docker exec <container> php artisan config:cache
+docker exec <container> php artisan cache:clear
 ```
 
 ### Test Your App
-- Visit the Railway URL
+- Visit the server URL
 - Test login/registration
 - Test all features
+
+---
+
+## Mail (Resend HTTP API)
+
+Outbound email uses a custom Resend HTTP API transport (`app/Transports/ResendTransport.php`)
+instead of SMTP, configured via `MAIL_MAILER=resend` + `RESEND_API_KEY`. This was originally
+introduced because Railway blocks outbound SMTP ports, but it works on any host and remains
+the configured mailer. Brevo transport (`brevo`) is also available as an alternative.
 
 ---
 
@@ -157,8 +149,8 @@ railway run php artisan cache:clear
 
 | Issue | Solution |
 |-------|----------|
-| "No application key" | Set APP_KEY in Railway dashboard |
-| Database connection error | Verify DB_* variables match Railway MySQL |
+| "No application key" | Set APP_KEY in the server environment |
+| Database connection error | Verify DB_* variables match your MySQL instance |
 | File uploads not working | Set CLOUDINARY_URL correctly |
 | 500 Error | Check APP_DEBUG=true temporarily for error details |
 | Static assets 404 | Run `php artisan config:cache` |
@@ -167,10 +159,8 @@ railway run php artisan cache:clear
 
 ## Important Notes
 
-1. **File Storage**: Local storage won't persist on Railway. Use Cloudinary (already configured).
+1. **File Storage**: Container filesystem is ephemeral. Use Cloudinary (already configured) for uploads.
 
-2. **Session**: Now uses database driver (sessions table created).
+2. **Session**: Uses the database driver (sessions table created).
 
-3. **HTTPS**: Provided automatically by Railway.
-
-4. **Free Tier**: Railway free tier has 500 hours/month. App sleeps after 5 min inactivity.
+3. **HTTPS**: Terminate at Cloudflare/nginx in front of the container (see `deploy/cloudflared-quicktunnel.service`).

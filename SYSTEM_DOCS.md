@@ -1016,12 +1016,12 @@ php artisan serve
 - [x] Add reward deletion protection (blocks deletion if redemptions exist)
 - [x] Add `used_for_event_id` column to reward_redemptions for tracking priority consumption
 - [x] Implement email verification (MustVerifyEmail, signed URLs, public resend, Malay language, non-enumeration)
-- [x] Implement custom Resend HTTP API transport for Railway deployment (SMTP ports blocked by Railway)
+- [x] Implement custom Resend HTTP API transport (HTTP API mail transport; originally added for Railway, retained as it works on any host)
 - [x] Add withdrawal fund_purpose field (required, with balance validation at fund purpose level)
 - [x] Implement 3-layer race condition fix for withdrawal approvals (transaction + lockForUpdate + pending balance blocking)
 - [x] Add supporting document upload system for withdrawals (optional, admin invoices + treasurer proofs)
 - [x] Add per-fund-purpose cash flow breakdown to financial reports
-- [x] Add Railway deployment: custom Dockerfile, stderr logging, persistence-less filesystem workarounds
+- [x] Add Railway deployment (historical; since removed — now deploys via Docker on droplet)
 - [x] Fix XSS in gamification SVG rendering (AG-1/PG-1) — Created `@safe_svg()` Blade directive that strips `<script>`, event handlers, `<foreignObject>`, and dangerous elements from SVG markup
 - [x] Add `is_amil` to `User::$fillable` — was missing, causing amil toggle operations to silently fail
 - [x] Fix admin fund purposes (AD-4) — Replaced delete with activate/deactivate toggle (`is_active`)
@@ -1734,7 +1734,7 @@ The previous dummy rewards were replaced with 14 mosque-appropriate rewards acro
 
 ### 9.23 Email Verification & Resend Mail Transport
 
-The application now implements Laravel's `MustVerifyEmail` interface for email verification, with a custom HTTP API transport for Resend (resend.com) to bypass Railway's SMTP port restrictions.
+The application now implements Laravel's `MustVerifyEmail` interface for email verification, with a custom HTTP API transport for Resend (resend.com) for outbound mail.
 
 #### Email Verification Flow
 
@@ -1772,21 +1772,10 @@ GuzzleHttp\Client::post('https://api.resend.com/emails')
 Resend HTTP API → Email delivered
 ```
 
-- No SMTP (Laravel 8 uses SwiftMailer, not Symfony Mailer; `Mail::extend()` does not exist on Mail facade)
-- `afterResolving('mail.manager')` is used because `MailServiceProvider implements DeferrableProvider` — `mail.manager` binding doesn't exist during `boot()`
-- Railway blocks outbound SMTP ports 587 and 465; HTTP API bypasses this restriction
+- SMTP is not used; mail goes over HTTPS to the Resend API (also works where outbound SMTP ports are blocked)
 - Falls back to `config('mail.from.address')` for sender; Resend `onboarding@resend.dev` used for testing (no domain verification needed, but only sends to your Resend account email)
 
-#### Railway Deployment Notes
-
-| Constraint                    | Workaround                                                                       |
-| ----------------------------- | -------------------------------------------------------------------------------- |
-| SMTP ports (587, 465) blocked | HTTP API transport via `guzzlehttp/guzzle`                                       |
-| Read-only runtime filesystem  | `LOG_CHANNEL=stderr` (file logging unavailable)                                  |
-| Custom Dockerfile required    | Builds with `composer install --no-scripts`, then `php artisan package:discover` |
-| `.env` from `.env.example`    | Railway Variables override build-copied `.env` values                            |
-
-**Required Railway Environment Variables:**
+#### Mail Environment Variables
 
 - `MAIL_MAILER=resend`
 - `LOG_CHANNEL=stderr`
@@ -2031,7 +2020,7 @@ The application's Blade cache is at `storage/framework/views/`.
 | `app/Policies/EventPolicy.php`                                                                | Event authorization (includes `join()` method)                                                                                                                                                                               |
 | `app/Policies/WithdrawalRequestPolicy.php`                                                    | Withdrawal request authorization                                                                                                                                                                                             |
 | `app/Rules/UniqueEventLocation.php`                                                           | Custom validation rule for unique event locations                                                                                                                                                                            |
-| `app/Transports/ResendTransport.php`                                                          | Custom SwiftMailer transport for Resend HTTP API (bypasses Railway SMTP port blocks)                                                                                                                                         |
+| `app/Transports/ResendTransport.php`                                                          | Custom SwiftMailer transport for Resend HTTP API (HTTPS-based mail, no SMTP needed)                                                                                                                                         |
 | `app/Models/User.php`                                                                         | User model with roles, gamification relationships, avatar support (`getAvatarUrlAttribute`, `getInitialsAttribute`), `hide_from_leaderboard`, `age`, `address`                                                               |
 | `app/Models/Donation.php`                                                                     | Donation entity and relationship                                                                                                                                                                                             |
 | `app/Models/WithdrawalRequest.php`                                                            | Withdrawal workflow entity with fund_purpose, balance validation helpers                                                                                                                                                     |
@@ -2100,7 +2089,7 @@ The application's Blade cache is at `storage/framework/views/`.
 | `app/Console/Commands/ValidateTestData.php`                                                   | Command to validate generated test data integrity                                                                                                                                                                            |
 | `database/seeders/GenerateUserAvatars.php`                                                    | Generate avatar images for all users using GD library                                                                                                                                                                        |
 | `resources/views/gamification/certificate.blade.php`                                          | PDF certificate template (A4 landscape, bilingual, with Bismillah & Quran verse)                                                                                                                                             |
-| `app/Transports/ResendTransport.php`                                                          | Custom SwiftMailer HTTP API transport for Resend (production mail on Railway)                                                                                                                                                |
+| `app/Transports/ResendTransport.php`                                                          | Custom SwiftMailer HTTP API transport for Resend (production mail)                                                                                                                                                |
 | `resources/views/auth/resend-verification.blade.php`                                          | Public email verification resend form                                                                                                                                                                                        |
 | `package.json`                                                                                | Node toolchain and Laravel Mix build scripts                                                                                                                                                                                 |
 
