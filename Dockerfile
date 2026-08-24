@@ -1,5 +1,5 @@
-# Build: v2 - force rebuild 2026-05-30
-FROM php:8.1-cli AS builder
+# Build: v3 - PHP 8.3 for Laravel 12
+FROM php:8.3-cli AS builder
 
 WORKDIR /var/www/html
 
@@ -43,7 +43,7 @@ RUN npm run production --no-interaction 2>/dev/null || echo "Asset compilation s
 # Run artisan commands after vendor exists
 RUN php artisan package:discover --ansi
 
-FROM php:8.1-fpm
+FROM php:8.3-fpm
 
 WORKDIR /var/www/html
 
